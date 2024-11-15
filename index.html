@@ -105,11 +105,11 @@
     function handleUserInput(message) {
         switch (currentStep) {
             case 'entry':
-                appendMessage('bot', 'แน่นอน ฉันช่วยคุณได้ อยากรู้อะไรเกี่ยวกับ อนุบาล AI? (หนังสือ, การอบรม, คู่มือครู)');
+                appendMessage('bot', 'แน่นอน ฉันช่วยคุณได้ อยากรู้อะไรเกี่ยวกับอนุบาล AI? (หนังสือ, การอบรม, คู่มือครู)');
                 currentStep = 'ticketType';
                 break;
             case 'ticketType':
-                if (message.toLowerCase() === 'หนังสือ') {
+                if (message.toLowerCase() === 'ทีมงาน') {
                     appendMessage('bot', 'ได้เลย! อยากได้หนังสือเรื่องใด บทที่เท่าไหร่?');
                     currentStep = 'movieDetails';
                 } else if (message.toLowerCase() === 'การอบรม') {
@@ -185,11 +185,11 @@
     function restartChat() {
         chatBox.innerHTML = '';
         currentStep = 'entry';
-        appendMessage('bot', 'สวัสดี อนุบาล AI ยินดีต้อนรับ มีอะไรให้ช่วยเหลือค่ะ?');
+        appendMessage('bot', 'สวัสดีค่ะ อนุบาล AI ยินดีต้อนรับ มีอะไรให้ช่วยเหลือคะ?');
     }
 
     // Initial Bot Greeting
-    appendMessage('bot', 'สวัสดี อนุบาล AI ยินดีต้อนรับ มีอะไรให้ช่วยเหลือค่ะ?');
+    appendMessage('bot', 'สวัสดีค่ะ อนุบาล AI ยินดีต้อนรับ มีอะไรให้ช่วยเหลือคะ?');
 </script>
 
 </body>
