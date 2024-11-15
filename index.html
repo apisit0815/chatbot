@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticket Price Chatbot</title>
+    <title>อนุบาล AI ChatBot สวัสดีค่ะ</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -63,7 +63,7 @@
 
 <div id="chat-container">
     <div id="chat-box"></div>
-    <input type="text" id="user-input" placeholder="Type a message...">
+    <input type="text" id="user-input" placeholder="พิมพ์คำถาม...">
     <button id="send-btn">Send</button>
     <button id="restart-btn">Restart</button>
 </div>
@@ -105,78 +105,78 @@
     function handleUserInput(message) {
         switch (currentStep) {
             case 'entry':
-                appendMessage('bot', 'Sure, I can help with that. What type of ticket are you looking for? (Movie, Concert, Transportation)');
+                appendMessage('bot', 'แน่นอน ฉันช่วยคุณได้ อยากรู้อะไรเกี่ยวกับ อนุบาล AI? (หนังสือ, การอบรม, คู่มือครู)');
                 currentStep = 'ticketType';
                 break;
             case 'ticketType':
-                if (message.toLowerCase() === 'movie') {
-                    appendMessage('bot', 'Great! Which movie would you like to see, and at which cinema?');
+                if (message.toLowerCase() === 'หนังสือ') {
+                    appendMessage('bot', 'ได้เลย! อยากได้หนังสือเรื่องใด บทที่เท่าไหร่?');
                     currentStep = 'movieDetails';
-                } else if (message.toLowerCase() === 'concert') {
-                    appendMessage('bot', 'Awesome! Which concert are you interested in?');
+                } else if (message.toLowerCase() === 'การอบรม') {
+                    appendMessage('bot', 'ยินดีจ้า! อยากอบรมเรื่องอะไร?');
                     currentStep = 'concertDetails';
-                } else if (message.toLowerCase() === 'transportation') {
-                    appendMessage('bot', 'Are you looking for a bus, train, or flight ticket?');
+                } else if (message.toLowerCase() === 'คู่มือครู') {
+                    appendMessage('bot', 'อยากได้คู่มือเรื่องใด, ต้นไม้ตัดสินใจ, เอไอนิรมิต, แชตบอต?');
                     currentStep = 'transportMode';
                 } else {
-                    appendMessage('bot', 'Sorry, I didn\'t understand that. Please specify Movie, Concert, or Transportation.');
+                    appendMessage('bot', 'ขออภัย, ฉันไม่เข้าใจคำถาม. กรุณาระบุว่า นังสือ, การอบรม, คู่มือครู');
                 }
                 break;
             case 'movieDetails':
-                appendMessage('bot', `The ticket price for '${message}' is $10.`);
-                appendMessage('bot', 'Would you like to proceed with booking? (Yes/No)');
+                appendMessage('bot', `คู่มือครูราคา '${message}' is $10.`);
+                appendMessage('bot', 'อยากจองซื้อเลยไหม? (ใช่/ไม่ใช่)');
                 currentStep = 'booking';
                 break;
             case 'concertDetails':
-                appendMessage('bot', `Tickets for '${message}' start at $50. Would you like to proceed with booking? (Yes/No)`);
+                appendMessage('bot', `ราคา '${message}' เริ่มต้น $50. อยากจองซื้อเลยไหม? (ใช่/ไม่ใช่)`);
                 currentStep = 'booking';
                 break;
             case 'transportMode':
                 if (message.toLowerCase() === 'bus') {
-                    appendMessage('bot', 'Where would you like to travel?');
+                    appendMessage('bot', 'อยากซื้อไปทำอะไร?');
                     currentStep = 'busDetails';
-                } else if (message.toLowerCase() === 'train') {
-                    appendMessage('bot', 'Where would you like to travel?');
+                } else if (message.toLowerCase() === 'อ่าน') {
+                    appendMessage('bot', 'อยากซื้อไปทำอะไร?');
                     currentStep = 'trainDetails';
-                } else if (message.toLowerCase() === 'flight') {
-                    appendMessage('bot', 'Which destination are you traveling to?');
+                } else if (message.toLowerCase() === 'ศึกษา') {
+                    appendMessage('bot', 'อยากได้ไปทำอะไร?');
                     currentStep = 'flightDetails';
                 } else {
-                    appendMessage('bot', 'Sorry, I didn\'t understand that. Please specify Bus, Train, or Flight.');
+                    appendMessage('bot', 'ขออภัย, ฉันไม่เข้าใจคำถาม กรุณาบอกว่าเป็น สอน, อ่าน, สะสม');
                 }
                 break;
             case 'busDetails':
-                appendMessage('bot', `The bus ticket price to ${message} starts at $25.`);
-                appendMessage('bot', 'Would you like to proceed with booking? (Yes/No)');
+                appendMessage('bot', `คู่มือราคม ${message} เริ่มต้นที่ $25.`);
+                appendMessage('bot', 'อยากจองซื้อเลยไหม? (ใช่/ใม่ใช่)');
                 currentStep = 'booking';
                 break;
             case 'trainDetails':
-                appendMessage('bot', `The train ticket price to ${message} is $30.`);
-                appendMessage('bot', 'Would you like to proceed with booking? (Yes/No)');
+                appendMessage('bot', `คู๋มือราคา ${message} เท่ากับ $30.`);
+                appendMessage('bot', 'อยากจองซื้อเลยไหม? (ใช่/ไม่ใช่)');
                 currentStep = 'booking';
                 break;
             case 'flightDetails':
-                appendMessage('bot', `Flight tickets to ${message} start at $100.`);
-                appendMessage('bot', 'Would you like to proceed with booking? (Yes/No)');
+                appendMessage('bot', `เอาไปทำอะไร ${message} ราคาเริ่มต้น $100.`);
+                appendMessage('bot', 'อยากจองซื้อเลยไหม? (ใช่/ไม่ใช่)');
                 currentStep = 'booking';
                 break;
             case 'booking':
                 if (message.toLowerCase() === 'yes') {
-                    appendMessage('bot', 'Great! I’ll help you with the booking. Please provide your travel date.');
+                    appendMessage('bot', 'เยี่ยมเลย! ฉันจะช่วยจองให้นะ ขอข้อมูลที่อยู่ด้วย');
                     currentStep = 'end';
                 } else if (message.toLowerCase() === 'no') {
-                    appendMessage('bot', 'No problem! Let me know if you need anything else.');
+                    appendMessage('bot', 'ไม่มีปัญหา! อยากทราบอะไรอีก แจ้งได้เลยจ้า');
                     currentStep = 'entry';
                 } else {
-                    appendMessage('bot', 'Please respond with Yes or No.');
+                    appendMessage('bot', 'กรุณาตอบว่า ใช่/ไม่ใช่');
                 }
                 break;
             case 'end':
-                appendMessage('bot', 'Thank you! Your booking request has been noted.');
+                appendMessage('bot', 'ขอบคุณ เราได้ทำการจองซื้อให้เรียบร้อย');
                 currentStep = 'entry';
                 break;
             default:
-                appendMessage('bot', 'I didn\'t understand that. Let\'s start again.');
+                appendMessage('bot', 'ฉํนไม่เข้าใจคำถาม. กรุณาเริ่มใหม่');
                 currentStep = 'entry';
                 break;
         }
@@ -185,11 +185,11 @@
     function restartChat() {
         chatBox.innerHTML = '';
         currentStep = 'entry';
-        appendMessage('bot', 'Hello! How can I assist you today?');
+        appendMessage('bot', 'สวัสดี อนุบาล AI ยินดีต้อนรับ มีอะไรให้ช่วยเหลือค่ะ?');
     }
 
     // Initial Bot Greeting
-    appendMessage('bot', 'Hello! How can I assist you today?');
+    appendMessage('bot', 'สวัสดี อนุบาล AI ยินดีต้อนรับ มีอะไรให้ช่วยเหลือค่ะ?');
 </script>
 
 </body>
