@@ -1,177 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticket Price Chatbot</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        #chat-container {
-            width: 400px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
-        #chat-box {
-            height: 300px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
-        .message {
-            margin: 5px 0;
-        }
-        .user-message {
-            text-align: right;
-        }
-        .bot-message {
-            text-align: left;
-        }
-        #user-input {
-            width: calc(100% - 50px);
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-        }
-        #send-btn {
-            padding: 10px;
-            margin-left: 5px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body>
+const chatBox = document.getElementById('chat-box');
+const userInput = document.getElementById('user-input');
+const sendBtn = document.getElementById('send-btn');
 
-<div id="chat-container">
-    <div id="chat-box"></div>
-    <input type="text" id="user-input" placeholder="Type a message...">
-    <button id="send-btn">Send</button>
-</div>
+// ! สำคัญ: แก้ไข URL นี้เป็น URL ของ Cloudflare Worker ของคุณ
+const WORKER_URL = 'https://openai-proxy.a-tongchai.workers.dev';
 
-<script>
-    const chatBox = document.getElementById('chat-box');
-    const userInput = document.getElementById('user-input');
-    const sendBtn = document.getElementById('send-btn');
+async function getBotResponse(prompt) {
+    try {
+        const response = await fetch(WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt: prompt })
+        });
 
-    let currentStep = 'entry';
-
-    sendBtn.addEventListener('click', () => {
-        const message = userInput.value.trim();
-        if (message) {
-            appendMessage('user', message);
-            handleUserInput(message);
-            userInput.value = '';
+        if (!response.ok) {
+            throw new Error(`Worker error: ${response.statusText}`);
         }
-    });
 
-    function appendMessage(sender, message) {
-        const messageDiv = document.createElement('div');
-        messageDiv.classList.add('message');
-        messageDiv.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
-        messageDiv.innerText = message;
-        chatBox.appendChild(messageDiv);
-        chatBox.scrollTop = chatBox.scrollHeight;
+        const data = await response.json();
+        return data.choices[0].message.content.trim();
+    } catch (error) {
+        console.error("Error fetching bot response:", error);
+        return "ขออภัยค่ะ เกิดข้อผิดพลาดในการเชื่อมต่อ";
     }
+}
 
-    function handleUserInput(message) {
-        switch (currentStep) {
-            case 'entry':
-                appendMessage('bot', 'Sure, I can help with that. What type of ticket are you looking for? (Movie, Concert, Transportation)');
-                currentStep = 'ticketType';
-                break;
-            case 'ticketType':
-                if (message.toLowerCase() === 'movie') {
-                    appendMessage('bot', 'Great! Which movie would you like to see, and at which cinema?');
-                    currentStep = 'movieDetails';
-                } else if (message.toLowerCase() === 'concert') {
-                    appendMessage('bot', 'Awesome! Which concert are you interested in?');
-                    currentStep = 'concertDetails';
-                } else if (message.toLowerCase() === 'transportation') {
-                    appendMessage('bot', 'Are you looking for a bus, train, or flight ticket?');
-                    currentStep = 'transportMode';
-                } else {
-                    appendMessage('bot', 'Sorry, I didn\'t understand that. Please specify Movie, Concert, or Transportation.');
-                }
-                break;
-            case 'movieDetails':
-                appendMessage('bot', `The ticket price for '${message}' is $10.`);
-                appendMessage('bot', 'Would you like to proceed with booking? (Yes/No)');
-                currentStep = 'booking';
-                break;
-            case 'concertDetails':
-                appendMessage('bot', `Tickets for '${message}' start at $50. Would you like to proceed with booking? (Yes/No)`);
-                currentStep = 'booking';
-                break;
-            case 'transportMode':
-                if (message.toLowerCase() === 'bus') {
-                    appendMessage('bot', 'Where would you like to travel?');
-                    currentStep = 'busDetails';
-                } else if (message.toLowerCase() === 'train') {
-                    appendMessage('bot', 'Where would you like to travel?');
-                    currentStep = 'trainDetails';
-                } else if (message.toLowerCase() === 'flight') {
-                    appendMessage('bot', 'Which destination are you traveling to?');
-                    currentStep = 'flightDetails';
-                } else {
-                    appendMessage('bot', 'Sorry, I didn\'t understand that. Please specify Bus, Train, or Flight.');
-                }
-                break;
-            case 'busDetails':
-                appendMessage('bot', `The bus ticket price to ${message} starts at $25.`);
-                appendMessage('bot', 'Would you like to proceed with booking? (Yes/No)');
-                currentStep = 'booking';
-                break;
-            case 'trainDetails':
-                appendMessage('bot', `The train ticket price to ${message} is $30.`);
-                appendMessage('bot', 'Would you like to proceed with booking? (Yes/No)');
-                currentStep = 'booking';
-                break;
-            case 'flightDetails':
-                appendMessage('bot', `Flight tickets to ${message} start at $100.`);
-                appendMessage('bot', 'Would you like to proceed with booking? (Yes/No)');
-                currentStep = 'booking';
-                break;
-            case 'booking':
-                if (message.toLowerCase() === 'yes') {
-                    appendMessage('bot', 'Great! I’ll help you with the booking. Please provide your travel date.');
-                    currentStep = 'end';
-                } else if (message.toLowerCase() === 'no') {
-                    appendMessage('bot', 'No problem! Let me know if you need anything else.');
-                    currentStep = 'entry';
-                } else {
-                    appendMessage('bot', 'Please respond with Yes or No.');
-                }
-                break;
-            case 'end':
-                appendMessage('bot', 'Thank you! Your booking request has been noted.');
-                currentStep = 'entry';
-                break;
-            default:
-                appendMessage('bot', 'I didn\'t understand that. Let\'s start again.');
-                currentStep = 'entry';
-                break;
-        }
+function appendMessage(message, sender) {
+    const messageElement = document.createElement('div');
+    messageElement.innerText = message;
+    messageElement.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
+    chatBox.appendChild(messageElement);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+async function handleUserInput() {
+    const userMessage = userInput.value;
+    if (!userMessage) return;
+
+    appendMessage(userMessage, 'user');
+    userInput.value = '';
+
+    const botMessage = await getBotResponse(userMessage);
+    appendMessage(botMessage, 'bot');
+}
+
+sendBtn.addEventListener('click', handleUserInput);
+userInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        handleUserInput();
     }
-
-    // Initial Bot Greeting
-    appendMessage('bot', 'Hello! How can I assist you today?');
-</script>
-
-</body>
-</html>
+});
