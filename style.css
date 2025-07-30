@@ -3,12 +3,12 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 50%;
     background-color: #f0f0f0;
 }
 #chat-container {
-    width: 400px;
-    height: 600px;
+    width: 50%;
+    height: 50%;
     border: 1px solid #ccc;
     display: flex;
     flex-direction: column;
