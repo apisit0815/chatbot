@@ -3,7 +3,7 @@ const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
 
 // ! สำคัญ: แก้ไข URL นี้เป็น URL ของ Cloudflare Worker ของคุณ
-const WORKER_URL = 'openai-proxy.a-tongchai.workers.dev';
+const WORKER_URL = 'http://openai-proxy.a-tongchai.workers.dev';
 
 async function getBotResponse(prompt) {
     try {
@@ -21,7 +21,7 @@ async function getBotResponse(prompt) {
         return data.choices[0].message.content.trim();
     } catch (error) {
         console.error("Error fetching bot response:", error);
-        return "ขออภัยค่ะ เกิดข้อผิดพลาดในการเชื่อมต่อ";
+        return "ขออภัยครับ เกิดข้อผิดพลาดในการเชื่อมต่อ";
     }
 }
 
