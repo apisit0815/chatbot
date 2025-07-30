@@ -5,7 +5,7 @@ const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
 
 // ! สำคัญ: แก้ไข URL นี้เป็น URL ของ Cloudflare Worker ของคุณ
-const WORKER_URL = 'https://openai-proxy.your-worker.workers.dev';
+const WORKER_URL = 'https://openai-proxy.a-tongchai.workers.dev';
 
 // ฟังก์ชันสำหรับเพิ่มข้อความลงในกล่องแชท
 function appendMessage(sender, isNewMessage = true) {
@@ -68,7 +68,7 @@ async function getBotResponseStream(prompt) {
         }
     } catch (error) {
         console.error("Error fetching bot response:", error);
-        botMessageElement.innerText = "ขออภัยค่ะ เกิดข้อผิดพลาดในการเชื่อมต่อ";
+        botMessageElement.innerText = "ขออภัยครับ เกิดข้อผิดพลาดในการเชื่อมต่อ";
     }
 }
 
