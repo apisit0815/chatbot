@@ -3,7 +3,7 @@ const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
 
 // ! สำคัญ: แก้ไข URL นี้เป็น URL ของ Cloudflare Worker ของคุณ
-const WORKER_URL = 'https://openai-proxy.a-tongchai.workers.dev';
+const WORKER_URL = 'openai-proxy.a-tongchai.workers.dev';
 
 async function getBotResponse(prompt) {
     try {
