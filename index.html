@@ -3,62 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dr.APisit's STEM Classroom Chatbot</title>
+  <title>Dr.Apisit’s STEM classroom chatbot</title>
 
+  <!-- ฟอนต์ไทยอ่านง่าย -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600&display=swap" rel="stylesheet">
 
-  <style>
-    :root{
-      --bg:#f7fafc; --panel:#ffffff; --text:#1a202c; --muted:#6b7280;
-      --accent:#2563eb; --accent-weak:#eef2ff; --border:#e5e7eb; --bubble:#f1f5f9; --ok:#10b981; --warn:#ef4444;
-    }
-    .dark{
-      --bg:#0b1220; --panel:#0f172a; --text:#e5e7eb; --muted:#94a3b8;
-      --accent:#60a5fa; --accent-weak:#0b2942; --border:#1f2937; --bubble:#111827; --ok:#34d399; --warn:#f87171;
-    }
-    *{ box-sizing:border-box }
-    body{
-      margin:0; font-family:"Noto Sans Thai", system-ui, sans-serif;
-      background:var(--bg); color:var(--text);
-      display:flex; justify-content:center; padding:16px;
-    }
-    .app{ width:100%; max-width:920px; display:flex; flex-direction:column; gap:12px; }
-    .card{ background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 10px 24px rgba(0,0,0,.06); overflow:hidden; }
-    .header{ display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--border); }
-    .brand{ display:flex; align-items:center; gap:10px; }
-    .logo{ width:36px; height:36px; border-radius:10px; display:grid; place-items:center; background:linear-gradient(135deg, var(--accent), #22d3ee); color:white; font-weight:700; }
-    .title{ font-weight:700; letter-spacing:.2px }
-    .controls{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-    .sel, .sliderWrap, .toggle{
-      border:1px solid var(--border); background:transparent; color:var(--text);
-      padding:8px 10px; border-radius:10px;
-    }
-    .sel{ min-width: 160px; }
-    .sliderWrap{ display:flex; align-items:center; gap:8px; }
-    .sliderWrap input{ accent-color: var(--accent); }
-    .toggle{ cursor:pointer; }
-    .chat{ height:min(60vh, 560px); overflow:auto; padding:18px; background:linear-gradient(180deg, transparent, rgba(0,0,0,.02)); scroll-behavior:smooth; }
-    .empty{ color:var(--muted); text-align:center; margin-top:18px; font-size:14px; }
-    .row{ display:flex; gap:10px; margin:10px 0; }
-    .row.user{ justify-content:flex-end; }
-    .avatar{ width:32px; height:32px; border-radius:10px; display:grid; place-items:center; font-size:14px; background:var(--bubble); color:var(--muted); flex:0 0 auto; }
-    .bubble{ max-width:78%; padding:10px 12px; border-radius:14px; line-height:1.45; word-wrap:break-word; border:1px solid var(--border); background:var(--panel); }
-    .user .bubble{ background:var(--accent-weak); border-color:transparent; }
-    .assistant .bubble{ background:var(--panel); }
-    .composer{ display:flex; gap:10px; padding:12px; border-top:1px solid var(--border); }
-    textarea{ flex:1; resize:none; min-height:44px; max-height:140px; padding:12px; border-radius:12px; border:1px solid var(--border); background:var(--panel); color:var(--text); outline:none; }
-    textarea:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(37,99,235,.15) }
-    .send{ height:44px; padding:0 16px; border:none; border-radius:12px; cursor:pointer; background:var(--accent); color:white; font-weight:600; box-shadow:0 8px 16px rgba(37,99,235,.35); }
-    .send:disabled{ opacity:.6; cursor:not-allowed; box-shadow:none }
-    .footbar{ display:flex; justify-content:space-between; align-items:center; padding:0 12px 12px 12px; font-size:12px; color:var(--muted); }
-    .count{ color:var(--muted); }
-    .count.warn{ color: var(--warn); }
-    .meta{ color: var(--ok); }
-    .typing{ font-size:12px; color:var(--muted); padding:0 16px 12px }
-    .toast{ position:fixed; inset:auto 16px 16px auto; background:var(--warn); color:white; padding:10px 12px; border-radius:12px; box-shadow:0 10px 24px rgba(0,0,0,.18); display:none; }
-    @media (max-width: 560px){ .bubble{ max-width:88% } .title{ font-size:16px } .sel{ min-width: 130px; } }
-  </style>
+  <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
   <div class="app">
@@ -67,25 +18,25 @@
         <div class="brand">
           <div class="logo">AI</div>
           <div>
-            <div class="title">STEM Classroom Chatbot</div>
-            <div style="font-size:12px;color:var(--muted)">โค้ช/ฟาซิลิเทเตอร์สำหรับนักเรียนประถม–มัธยม (จำกัด 500 tokens เข้า/ออก)</div>
+            <div class="title">Dr.Apisit’s STEM classroom chatbot</div>
+            <div class="subtitle">โค้ช/ฟาซิลิเทเตอร์สำหรับนักเรียนไทยระดับประถม–มัธยม (จำกัด 500 โทเคน เข้า/ออก)</div>
           </div>
         </div>
 
         <div class="controls">
           <select id="mode" class="sel" title="บทบาทการตอบ">
-            <option value="coach">Coach (ถามนำ ชวนคิด)</option>
-            <option value="teacher">Teacher (อธิบายเป็นขั้น)</option>
-            <option value="tutor">Tutor (กระชับ ตรงประเด็น)</option>
+            <option value="coach">โหมด Coach (ถามนำ ชวนคิด)</option>
+            <option value="teacher">โหมด Teacher (อธิบายเป็นขั้น)</option>
+            <option value="tutor">โหมด Tutor (กระชับ ตรงประเด็น)</option>
           </select>
 
           <select id="grade" class="sel" title="ระดับชั้น">
-            <option value="primary">ประถม</option>
-            <option value="lowersec" selected>ม.ต้น</option>
-            <option value="uppersec">ม.ปลาย</option>
+            <option value="primary">ประถมศึกษา</option>
+            <option value="lowersec" selected>มัธยมต้น</option>
+            <option value="uppersec">มัธยมปลาย</option>
           </select>
 
-          <div class="sliderWrap" title="Temperature: ต่ำ=มีวินัย สูง=สร้างสรรค์">
+          <div class="sliderWrap" title="อุณหภูมิ: ต่ำ=มีวินัย สูง=สร้างสรรค์">
             <label for="temp">Temp</label>
             <input id="temp" type="range" min="0" max="1" step="0.1" value="0.5">
             <span id="tempVal">0.5</span>
@@ -104,150 +55,18 @@
       <div class="composer">
         <textarea id="q" placeholder="พิมพ์คำถาม (Enter = ส่ง, Shift+Enter = ขึ้นบรรทัดใหม่)"></textarea>
         <button class="send" id="sendBtn">ส่ง</button>
+        <button class="send alt" id="skipBtn" title="แสดงคำตอบทั้งหมดทันที">ข้ามการพิมพ์</button>
       </div>
 
       <div class="footbar">
-        <div id="tokCount" class="count">ประมาณ 0 / 500 tokens</div>
+        <div id="tokCount" class="count">ประมาณ 0 / 500 โทเคน</div>
         <div id="metaBar" class="meta"></div>
       </div>
     </div>
   </div>
 
-  <div class="toast" id="toast">เกิดข้อผิดพลาดในการเชื่อมต่อ</div>
+  <div class="toast" id="toast">เชื่อมต่อไม่สำเร็จ โปรดลองใหม่</div>
 
-  <script>
-    // ======= ตั้งค่า URL ของ Apps Script =======
-    const ENDPOINT = "https://script.google.com/macros/s/AKfycbzd5R6d7i1v8Rm827CaP1KB9AcKWb9F_SXuZ2-jtBltfpolkhWN-3E5cJKvPQaiEuCF/exec"; // ใส่ Web App URL ที่ได้จากการ Deploy
-
-    // ======= DOM helpers =======
-    const chat = document.getElementById("chat");
-    const q = document.getElementById("q");
-    const sendBtn = document.getElementById("sendBtn");
-    const typing = document.getElementById("typing");
-    const toast = document.getElementById("toast");
-    const modeBtn = document.getElementById("modeBtn");
-    const tempSlider = document.getElementById("temp");
-    const tempVal = document.getElementById("tempVal");
-    const tokCount = document.getElementById("tokCount");
-    const metaBar = document.getElementById("metaBar");
-    const modeSel = document.getElementById("mode");
-    const gradeSel = document.getElementById("grade");
-
-    // โหมดมืด/สว่าง
-    const applyTheme = () => {
-      const m = localStorage.getItem("theme") || "light";
-      document.documentElement.classList.toggle("dark", m === "dark");
-      modeBtn.textContent = m === "dark" ? "☀️" : "🌙";
-    };
-    modeBtn.onclick = () => {
-      const next = (localStorage.getItem("theme") || "light") === "light" ? "dark" : "light";
-      localStorage.setItem("theme", next); applyTheme();
-    };
-    applyTheme();
-
-    // แสดงค่า temp สดๆ
-    tempSlider.addEventListener("input", ()=> tempVal.textContent = tempSlider.value);
-    tempVal.textContent = tempSlider.value;
-
-    // ประมาณ token แบบเดียวกับฝั่ง Apps Script
-    function estimateTokensClient(s){
-      if(!s) return 0;
-      const ascii = (s.match(/[\x00-\x7F]/g) || []).length;
-      const nonAscii = s.length - ascii;
-      return Math.ceil(ascii/4) + Math.ceil(nonAscii/2);
-    }
-    function updateCounter(){
-      const t = estimateTokensClient(q.value);
-      tokCount.textContent = `ประมาณ ${t} / 500 tokens`;
-      tokCount.className = "count" + (t>500 ? " warn" : "");
-    }
-    q.addEventListener("input", updateCounter); updateCounter();
-
-    // เก็บบทสนทนาในหน้านี้ (รีเฟรชแล้วหาย; ถ้าต้องการถาวร ใช้ localStorage ได้)
-    let history = [];
-
-    function addMessage(role, text){
-      const row = document.createElement("div");
-      row.className = `row ${role}`;
-      const avatar = document.createElement("div");
-      avatar.className = "avatar";
-      avatar.textContent = role === "user" ? "คุณ" : "AI";
-      const bubble = document.createElement("div");
-      bubble.className = `bubble ${role}`;
-      bubble.textContent = text;
-      const wrap = document.createElement("div"); wrap.appendChild(bubble);
-      if(role === "user"){ row.appendChild(wrap); row.appendChild(avatar); }
-      else{ row.appendChild(avatar); row.appendChild(wrap); }
-      chat.appendChild(row);
-      chat.querySelector(".empty")?.remove();
-      chat.scrollTop = chat.scrollHeight;
-    }
-
-    function setTyping(v){ typing.style.display = v ? "block" : "none"; }
-    function setSending(v){ sendBtn.disabled = v; }
-    function showToast(msg){
-      toast.textContent = msg; toast.style.display = "block";
-      clearTimeout(showToast._t);
-      showToast._t = setTimeout(()=> toast.style.display = "none", 2400);
-    }
-
-    async function sendMessage(){
-      const text = q.value.trim();
-      if(!text) return;
-
-      // กันไม่ให้ส่งถ้าเกิน 500 tokens
-      const t = estimateTokensClient(text);
-      if (t > 500){
-        showToast("ข้อความยาวเกิน 500 tokens กรุณาย่อก่อนส่ง");
-        return;
-      }
-
-      addMessage("user", text);
-      history.push({ role: "user", content: text });
-      q.value = ""; updateCounter(); setTyping(true); setSending(true);
-      metaBar.textContent = "";  // ล้างผลลัพธ์ก่อนหน้า
-
-      try{
-        const payload = {
-          messages: history,             // server จะใส่ system prompt ให้เองตาม mode/grade
-          mode: modeSel.value,           // coach | teacher | tutor
-          grade: gradeSel.value,         // primary | lowersec | uppersec
-          temperature: Number(tempSlider.value) // ถ้าไม่ส่ง จะใช้ค่า default ที่ server
-        };
-
-        const res = await fetch(ENDPOINT, {
-          method:"POST",
-          headers:{ "Content-Type":"text/plain" }, // simple request เลี่ยง CORS preflight
-          body: JSON.stringify(payload)
-        });
-
-        // อ่านเป็น text ก่อน เผื่อ server ส่ง text/plain กลับมา
-        const raw = await res.text();
-        let data;
-        try{ data = JSON.parse(raw); } catch{ data = { error: "รูปแบบผลลัพธ์ไม่ถูกต้อง" }; }
-
-        if (data.error){
-          addMessage("assistant", "⚠️ " + data.error);
-        } else {
-          addMessage("assistant", data.reply || "(ไม่มีคำตอบ)");
-          // แสดงเวลาประมวลผล/โหมด/ชั้นปี จาก meta ที่ server ส่งกลับ
-          if (data.meta){
-            const { ms, grade, mode, temperature } = data.meta;
-            metaBar.textContent = `⏱ ${ms} ms • โหมด: ${mode} • ระดับ: ${grade} • temp: ${temperature}`;
-          }
-          history.push({ role:"assistant", content: data.reply });
-        }
-
-      }catch(err){
-        showToast("เชื่อมต่อไม่ได้ ลองใหม่อีกครั้ง");
-      }finally{
-        setTyping(false); setSending(false);
-      }
-    }
-
-    // คีย์ลัด: Enter = ส่ง, Shift+Enter = ขึ้นบรรทัดใหม่
-    q.addEventListener("keydown", (e)=>{ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); sendMessage(); } });
-    sendBtn.addEventListener("click", (e)=>{ e.preventDefault(); sendMessage(); });
-  </script>
+  <script src="./app.js"></script>
 </body>
 </html>
