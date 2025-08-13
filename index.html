@@ -10,150 +10,169 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
-    /* —— ธีมสีห้องเรียน STEM (ฟ้า-เขียว) —— */
+    /* ===== THEME: STEM Aqua-Teal ===== */
     :root{
-      --bg:#f0f9ff; --panel:#ffffff; --text:#0f172a; --muted:#64748b;
-      --accent:#14b8a6; --accent-weak:#ccfbf1; --border:#bae6fd; --bubble:#ecfeff;
+      --bg:#eef6ff; --bg2:#e7fbff;
+      --panel:#ffffff; --text:#0f172a; --muted:#64748b;
+      --accent:#14b8a6; --accent-weak:#ccfbf1; --border:#dbeafe; --bubble:#f8fafc;
       --ok:#0d9488; --warn:#ef4444;
+      --shadow:0 8px 24px rgba(15,23,42,.08);
     }
     .dark{
-      --bg:#0f172a; --panel:#1e293b; --text:#e2e8f0; --muted:#94a3b8;
-      --accent:#2dd4bf; --accent-weak:#0d9488; --border:#334155; --bubble:#164e63;
+      --bg:#0f172a; --bg2:#0b1220;
+      --panel:#111826; --text:#e2e8f0; --muted:#94a3b8;
+      --accent:#2dd4bf; --accent-weak:#0d9488; --border:#223047; --bubble:#0c1220;
       --ok:#5eead4; --warn:#f87171;
+      --shadow:0 12px 28px rgba(0,0,0,.32);
     }
 
-    /* —— รีเซ็ตพื้นฐาน ให้วัดความสูงได้จริง —— */
+    /* ===== RESET / FULL-HEIGHT ===== */
     *{ box-sizing:border-box }
-    html, body{ height:100%; width:100%; margin:0; }
+    html, body{ height:100%; width:100%; margin:0 }
     body{
       font-family:"Noto Sans Thai", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      background:var(--bg); color:var(--text);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, var(--bg2), transparent 60%),
+        radial-gradient(900px 500px at 110% 10%, var(--accent-weak), transparent 50%),
+        var(--bg);
       padding: max(0px, env(safe-area-inset-top)) max(0px, env(safe-area-inset-right))
                max(0px, env(safe-area-inset-bottom)) max(0px, env(safe-area-inset-left));
     }
 
-    /* —— แอปเต็มหน้าจอจริง —— */
+    /* ===== APP LAYOUT: 100% viewport height ===== */
     .app{
       width:100vw;
-      height:100dvh;         /* dvh = viewport สูงจริง */
+      height:100dvh;          /* viewport สูงจริง (แก้ปัญหาแถบนำทางมือถือ) */
       display:flex;
-      flex-direction:column;
+      align-items:stretch;
+      justify-content:center;
+      padding: clamp(8px, 2vw, 16px);
     }
-    @supports (-webkit-touch-callout: none) {
-      .app{ height:-webkit-fill-available; } /* fallback iOS เก่า */
-    }
+    @supports (-webkit-touch-callout: none) { .app{ height:-webkit-fill-available; } }
 
-    /* การ์ดเต็มจอ */
+    /* ===== CARD ===== */
     .card{
-      flex:1; display:flex; flex-direction:column;
-      background:var(--panel); border:none; border-radius:0;
+      flex:1;
+      display:flex; flex-direction:column;
+      max-width:1400px;
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:20px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
     }
 
-    /* ส่วนหัว (ติดบน) */
+    /* ===== HEADER ===== */
     .header{
       display:flex; flex-wrap:wrap; gap:12px;
       align-items:center; justify-content:space-between;
-      padding:14px 16px; border-bottom:1px solid var(--border);
-      background:var(--panel);
+      padding:16px 18px; border-bottom:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.7), rgba(255,255,255,.5));
+      backdrop-filter: blur(6px);
       position:sticky; top:0; z-index:10;
     }
-    .brand{ display:flex; align-items:center; gap:10px; }
+    .brand{ display:flex; align-items:center; gap:12px }
     .logo{
-      width:36px; height:36px; border-radius:10px; display:grid; place-items:center;
+      width:40px; height:40px; border-radius:12px; display:grid; place-items:center;
       background:linear-gradient(135deg, var(--accent), #22d3ee); color:white; font-weight:700;
+      box-shadow: 0 6px 14px rgba(20,184,166,.35);
     }
     .title{ font-weight:700; letter-spacing:.2px }
-    .subtitle{ font-size:12px; color:var(--muted); }
+    .subtitle{ font-size:12px; color:var(--muted) }
 
-    .controls{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .controls{ display:flex; gap:10px; align-items:center; flex-wrap:wrap }
     .sel, .sliderWrap, .toggle{
       border:1px solid var(--border); background:transparent; color:var(--text);
-      padding:8px 10px; border-radius:10px;
+      padding:8px 10px; border-radius:12px;
     }
-    .sel{ min-width: 160px; }
-    .sliderWrap{ display:flex; align-items:center; gap:8px; }
-    .sliderWrap input{ accent-color: var(--accent); }
-    .toggle{ cursor:pointer; }
+    .sel{ min-width: 170px }
+    .sliderWrap{ display:flex; align-items:center; gap:8px }
+    .sliderWrap input{ accent-color: var(--accent) }
+    .toggle{ cursor:pointer }
 
-    /* พื้นที่แชท (ยืดสุด) */
+    /* ===== CHAT AREA ===== */
     .chat{
       flex:1; min-height:0; overflow:auto;
-      padding:18px; background:linear-gradient(180deg, transparent, rgba(0,0,0,.02));
+      padding:22px clamp(12px, 2vw, 26px);
+      background:linear-gradient(180deg, transparent, rgba(0,0,0,.02));
       scroll-behavior:smooth;
     }
-    .empty{ color:var(--muted); text-align:center; margin-top:18px; font-size:14px; }
+    .empty{ color:var(--muted); text-align:center; margin-top:18px; font-size:14px }
 
-    /* แชทบับเบิล */
-    .row{ display:flex; gap:10px; margin:10px 0; }
-    .row.user{ justify-content:flex-end; }
+    .row{ display:flex; gap:10px; margin:10px 0 }
+    .row.user{ justify-content:flex-end }
     .avatar{
-      width:32px; height:32px; border-radius:10px; display:grid; place-items:center; font-size:14px;
+      width:36px; height:36px; border-radius:10px; display:grid; place-items:center; font-size:14px;
       background:var(--bubble); color:var(--muted); flex:0 0 auto;
     }
     .bubble{
-      max-width: min(1200px, 96vw);
-      padding:10px 12px; border-radius:14px; line-height:1.45; word-wrap:break-word;
+      max-width: min(980px, 92vw);
+      padding:12px 14px; border-radius:16px; line-height:1.55; word-wrap:break-word;
       border:1px solid var(--border); background:var(--panel);
+      box-shadow: 0 2px 8px rgba(0,0,0,.04);
     }
-    .user .bubble{ background:var(--accent-weak); border-color:transparent; }
-    .assistant .bubble{ background:var(--panel); }
+    .user .bubble{ background:var(--accent-weak); border-color: transparent }
+    .assistant .bubble{ background:var(--panel) }
 
-    /* ส่วนป้อนข้อความ (ติดล่าง) */
+    /* ===== COMPOSER ===== */
     .composer{
       display:flex; gap:10px; align-items:center;
-      padding: 12px env(safe-area-inset-right) calc(12px + env(safe-area-inset-bottom)) env(safe-area-inset-left);
-      border-top:1px solid var(--border); background:var(--panel);
+      padding: 12px clamp(12px, 2vw, 18px);
+      border-top:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.6), rgba(255,255,255,.9));
+      backdrop-filter: blur(6px);
       position:sticky; bottom:0; z-index:10;
     }
     textarea{
-      flex:1; resize:none; min-height:44px; max-height:40dvh;
-      padding:12px; border-radius:12px; border:1px solid var(--border);
+      flex:1; resize:none; min-height:48px; max-height:38dvh;
+      padding:12px 14px; border-radius:14px; border:1px solid var(--border);
       background:var(--panel); color:var(--text); outline:none;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,.04);
     }
-    textarea:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(20,184,166,.2) }
-    .actions{ display:flex; gap:10px; }
+    textarea:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(20,184,166,.18) }
+    .actions{ display:flex; gap:10px }
     .send{
       height:44px; padding:0 16px; border:none; border-radius:12px; cursor:pointer;
       background:var(--accent); color:white; font-weight:600; box-shadow:0 8px 16px rgba(20,184,166,.35);
     }
-    .send.alt{ background: var(--ok); }
+    .send.alt{ background: var(--ok) }
     .send:disabled{ opacity:.6; cursor:not-allowed; box-shadow:none }
 
-    /* แถบข้อมูลด้านล่าง */
+    /* ===== FOOT ===== */
     .footbar{
       display:flex; justify-content:space-between; align-items:center;
-      padding:8px 16px; font-size:12px; color:var(--muted);
-      border-top:1px solid var(--border); background:var(--panel);
+      padding:8px clamp(12px, 2vw, 18px); font-size:12px; color:var(--muted);
+      border-top:1px solid var(--border);
+      background: var(--panel);
     }
-    .count{ color:var(--muted); }
-    .count.warn{ color: var(--warn); }
-    .meta{ color: var(--ok); }
+    .count{ color:var(--muted) }
+    .count.warn{ color: var(--warn) }
+    .meta{ color: var(--ok) }
 
-    /* สถานะกำลังพิมพ์ */
-    .typing{ font-size:12px; color:var(--muted); padding:0 16px 8px }
+    .typing{ font-size:12px; color:var(--muted); padding:0 clamp(12px, 2vw, 18px) 10px }
 
-    /* Toast */
     .toast{
-      position:fixed; inset:auto 16px calc(16px + env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) auto;
-      background:var(--warn); color:white; padding:10px 12px; border-radius:12px; box-shadow:0 10px 24px rgba(0,0,0,.18); display:none;
+      position:fixed; right:16px; bottom:16px;
+      background:var(--warn); color:white; padding:10px 12px; border-radius:12px; box-shadow:var(--shadow); display:none;
     }
 
-    /* มือถือ */
     @media (max-width: 560px){
-      .bubble{ max-width: 96vw }
+      .sel{ min-width:140px }
+      .bubble{ max-width:94vw }
       .title{ font-size:16px }
-      .sel{ min-width: 130px; }
     }
 
-    /* เคอร์เซอร์สำหรับเอฟเฟกต์พิมพ์สด */
-    .cursor { display:inline-block; width:8px; height:1em; vertical-align:bottom;
-      background: currentColor; margin-left:2px; animation: blink 1s steps(1) infinite; }
-    @keyframes blink { 50% { opacity: 0; } }
+    /* cursor for typewriter effect */
+    .cursor{ display:inline-block; width:8px; height:1em; vertical-align:bottom;
+      background:currentColor; margin-left:2px; animation:blink 1s steps(1) infinite }
+    @keyframes blink { 50%{ opacity:0 } }
   </style>
 </head>
 <body>
   <div class="app">
     <div class="card">
+      <!-- Header -->
       <div class="header">
         <div class="brand">
           <div class="logo">AI</div>
@@ -186,12 +205,14 @@
         </div>
       </div>
 
+      <!-- Chat area -->
       <div id="chat" class="chat">
         <div class="empty">เริ่มแชทได้เลยด้านล่าง ⤵︎</div>
       </div>
 
       <div class="typing" id="typing" style="display:none">🤖 กำลังพิมพ์…</div>
 
+      <!-- Composer -->
       <div class="composer">
         <textarea id="q" placeholder="พิมพ์คำถาม (Enter = ส่ง, Shift+Enter = ขึ้นบรรทัดใหม่)"></textarea>
         <div class="actions">
@@ -200,6 +221,7 @@
         </div>
       </div>
 
+      <!-- Footer info -->
       <div class="footbar">
         <div id="tokCount" class="count">ประมาณ 0 / 500 โทเคน</div>
         <div id="metaBar" class="meta"></div>
@@ -210,10 +232,10 @@
   <div class="toast" id="toast">เชื่อมต่อไม่สำเร็จ โปรดลองใหม่</div>
 
   <script>
-    // ======= แก้ค่านี้ให้เป็น URL ของ Apps Script Web App ของคุณ =======
+    /* ===== CONFIG: ใส่ URL ของ Apps Script Web App ===== */
     const ENDPOINT = "https://script.google.com/macros/s/AKfycbzd5R6d7i1v8Rm827CaP1KB9AcKWb9F_SXuZ2-jtBltfpolkhWN-3E5cJKvPQaiEuCF/exec"; // เช่น https://script.google.com/macros/s/AKfycb.../exec
 
-    // ======= DOM =======
+    /* ===== DOM ===== */
     const chat = document.getElementById("chat");
     const q = document.getElementById("q");
     const sendBtn = document.getElementById("sendBtn");
@@ -228,7 +250,7 @@
     const modeSel = document.getElementById("mode");
     const gradeSel = document.getElementById("grade");
 
-    // ======= ธีม มืด/สว่าง =======
+    /* ===== Theme toggle ===== */
     const applyTheme = () => {
       const m = localStorage.getItem("theme") || "light";
       document.documentElement.classList.toggle("dark", m === "dark");
@@ -240,11 +262,11 @@
     };
     applyTheme();
 
-    // แสดงค่า temp สด ๆ
+    /* temp show */
     tempSlider.addEventListener("input", ()=> tempVal.textContent = tempSlider.value);
     tempVal.textContent = tempSlider.value;
 
-    // ======= ประมาณโทเคน (สอดคล้องฝั่งเซิร์ฟเวอร์) =======
+    /* ===== Token estimate (matches server heuristic) ===== */
     function estimateTokensClient(s){
       if(!s) return 0;
       const ascii = (s.match(/[\x00-\x7F]/g) || []).length;
@@ -258,11 +280,11 @@
     }
     q.addEventListener("input", updateCounter); updateCounter();
 
-    // ======= สถานะบทสนทนา =======
+    /* ===== Chat state ===== */
     let history = [];
     let typingController = { skipping:false };
 
-    // ======= ตัวช่วย UI =======
+    /* ===== UI helpers ===== */
     function addMessage(role, text){
       const row = document.createElement("div");
       row.className = `row ${role}`;
@@ -304,10 +326,10 @@
       showToast._t = setTimeout(()=> toast.style.display = "none", 2400);
     }
 
-    // ======= เอฟเฟกต์พิมพ์สด =======
+    /* ===== Typewriter effect ===== */
     async function typeOutToBubble(text, bubbleEl, opts = {}) {
-      const speed = opts.speed ?? 10;  // ตัวอักษรต่อชุด
-      const delay = opts.delay ?? 18;  // หน่วงต่อชุด (มิลลิวินาที)
+      const speed = opts.speed ?? 10;   // characters per batch
+      const delay = opts.delay ?? 18;   // ms per batch
       const cursor = document.createElement("span");
       cursor.className = "cursor";
       bubbleEl.textContent = "";
@@ -338,17 +360,17 @@
         else { buffer += ch; }
         flushBuffer();
         if (i % speed === 0) await new Promise(r => setTimeout(r, delay));
+        chat.scrollTop = chat.scrollHeight;
       }
       cursor.remove();
     }
     skipBtn.addEventListener("click", ()=> typingController.skipping = true);
 
-    // ======= ส่งข้อความ =======
+    /* ===== Send flow ===== */
     async function sendMessage(){
       const text = q.value.trim();
       if(!text) return;
 
-      // กันส่งเกิน 500 โทเคน
       const t = estimateTokensClient(text);
       if (t > 500){
         showToast("ข้อความยาวเกิน 500 โทเคน กรุณาย่อก่อนส่ง");
@@ -362,15 +384,15 @@
 
       try{
         const payload = {
-          messages: history,      // เซิร์ฟเวอร์จะประกอบ system prompt ให้ตาม mode/grade
-          mode: modeSel.value,    // coach | teacher | tutor
-          grade: gradeSel.value,  // primary | lowersec | uppersec
+          messages: history,
+          mode: modeSel.value,       // coach | teacher | tutor
+          grade: gradeSel.value,     // primary | lowersec | uppersec
           temperature: Number(tempSlider.value)
         };
 
         const res = await fetch(ENDPOINT, {
           method:"POST",
-          headers:{ "Content-Type":"text/plain" }, // simple request ลด CORS preflight
+          headers:{ "Content-Type":"text/plain" }, // simple request ลด preflight
           body: JSON.stringify(payload)
         });
 
@@ -399,7 +421,7 @@
       }
     }
 
-    // คีย์ลัด: Enter = ส่ง, Shift+Enter = ขึ้นบรรทัดใหม่
+    // Enter = ส่ง, Shift+Enter = ขึ้นบรรทัดใหม่
     q.addEventListener("keydown", (e)=>{ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); sendMessage(); } });
     sendBtn.addEventListener("click", (e)=>{ e.preventDefault(); sendMessage(); });
   </script>
