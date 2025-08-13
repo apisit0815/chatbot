@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Dr.Apisit’s STEM classroom chatbot</title>
 
   <!-- ฟอนต์ไทยอ่านง่าย -->
@@ -54,8 +54,10 @@
 
       <div class="composer">
         <textarea id="q" placeholder="พิมพ์คำถาม (Enter = ส่ง, Shift+Enter = ขึ้นบรรทัดใหม่)"></textarea>
-        <button class="send" id="sendBtn">ส่ง</button>
-        <button class="send alt" id="skipBtn" title="แสดงคำตอบทั้งหมดทันที">ข้ามการพิมพ์</button>
+        <div class="actions">
+          <button class="send" id="sendBtn">ส่ง</button>
+          <button class="send alt" id="skipBtn" title="แสดงคำตอบทั้งหมดทันที">ข้ามการพิมพ์</button>
+        </div>
       </div>
 
       <div class="footbar">
