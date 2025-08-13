@@ -10,20 +10,50 @@
   --ok:#5eead4; --warn:#f87171;
 }
 
-/* —— โครงร่างและองค์ประกอบ —— */
+/* —— เต็มจอทั้งเดสก์ท็อปและมือถือ —— */
+html, body { height:100%; }
 *{ box-sizing:border-box }
+
 body{
-  margin:0; font-family:"Noto Sans Thai", system-ui, sans-serif;
+  margin:0;
+  font-family:"Noto Sans Thai", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   background:var(--bg); color:var(--text);
-  display:flex; justify-content:center; padding:16px;
+  /* padding ใช้ safe area สำหรับมือถือที่มีรอยบาก */
+  padding: max(0px, env(safe-area-inset-top)) max(0px, env(safe-area-inset-right))
+           max(0px, env(safe-area-inset-bottom)) max(0px, env(safe-area-inset-left));
 }
 
-.app{ width:100%; max-width:920px; display:flex; flex-direction:column; gap:12px; }
-.card{ background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 10px 24px rgba(0,0,0,.06); overflow:hidden; }
+/* แอปสูงเต็ม viewport จริง (รวมกรณีมือถือแถบนำทางลอย) */
+.app{
+  width:100%;
+  height:100svh;              /* ใช้ svh/dvh แก้ปัญหาแถบนำทางมือถือ */
+  display:flex;
+  flex-direction:column;
+}
 
-.header{ display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--border); }
+/* การ์ดขยายเต็มจอ */
+.card{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:0;            /* เต็มจอ ไม่ต้องโค้งก็ได้ */
+}
+
+/* ส่วนหัว */
+.header{
+  display:flex; flex-wrap:wrap; gap:12px;
+  align-items:center; justify-content:space-between;
+  padding:14px 16px; border-bottom:1px solid var(--border);
+  background: var(--panel);
+  position:sticky; top:0; z-index:10;   /* ติดบน */
+}
 .brand{ display:flex; align-items:center; gap:10px; }
-.logo{ width:36px; height:36px; border-radius:10px; display:grid; place-items:center; background:linear-gradient(135deg, var(--accent), #22d3ee); color:white; font-weight:700; }
+.logo{
+  width:36px; height:36px; border-radius:10px; display:grid; place-items:center;
+  background:linear-gradient(135deg, var(--accent), #22d3ee); color:white; font-weight:700;
+}
 .title{ font-weight:700; letter-spacing:.2px }
 .subtitle{ font-size:12px; color:var(--muted); }
 
@@ -37,35 +67,77 @@ body{
 .sliderWrap input{ accent-color: var(--accent); }
 .toggle{ cursor:pointer; }
 
-.chat{ height:min(60vh, 560px); overflow:auto; padding:18px; background:linear-gradient(180deg, transparent, rgba(0,0,0,.02)); scroll-behavior:smooth; }
+/* พื้นที่แชท “ยืดเต็มที่” */
+.chat{
+  flex:1;                     /* กินพื้นที่ที่เหลือทั้งหมด */
+  min-height:0;               /* สำคัญมาก ให้ flex คำนวณความสูงได้จริง */
+  overflow:auto;
+  padding:18px;
+  background:linear-gradient(180deg, transparent, rgba(0,0,0,.02));
+  scroll-behavior:smooth;
+}
 .empty{ color:var(--muted); text-align:center; margin-top:18px; font-size:14px; }
 
+/* ข้อความ */
 .row{ display:flex; gap:10px; margin:10px 0; }
 .row.user{ justify-content:flex-end; }
-.avatar{ width:32px; height:32px; border-radius:10px; display:grid; place-items:center; font-size:14px; background:var(--bubble); color:var(--muted); flex:0 0 auto; }
-
-.bubble{ max-width:78%; padding:10px 12px; border-radius:14px; line-height:1.45; word-wrap:break-word; border:1px solid var(--border); background:var(--panel); }
+.avatar{
+  width:32px; height:32px; border-radius:10px; display:grid; place-items:center; font-size:14px;
+  background:var(--bubble); color:var(--muted); flex:0 0 auto;
+}
+.bubble{
+  max-width: min(900px, 92vw);
+  padding:10px 12px; border-radius:14px; line-height:1.45; word-wrap:break-word;
+  border:1px solid var(--border); background:var(--panel);
+}
 .user .bubble{ background:var(--accent-weak); border-color:transparent; }
 .assistant .bubble{ background:var(--panel); }
 
-.composer{ display:flex; gap:10px; padding:12px; border-top:1px solid var(--border); }
-textarea{ flex:1; resize:none; min-height:44px; max-height:140px; padding:12px; border-radius:12px; border:1px solid var(--border); background:var(--panel); color:var(--text); outline:none; }
+/* แถบพิมพ์ข้อความ ติดด้านล่าง */
+.composer{
+  display:flex; gap:10px; align-items:center;
+  padding: 12px env(safe-area-inset-right) calc(12px + env(safe-area-inset-bottom)) env(safe-area-inset-left);
+  border-top:1px solid var(--border);
+  background: var(--panel);
+  position:sticky; bottom:0; z-index:10;
+}
+textarea{
+  flex:1; resize:none; min-height:44px; max-height:38svh;
+  padding:12px; border-radius:12px; border:1px solid var(--border);
+  background:var(--panel); color:var(--text); outline:none;
+}
 textarea:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(20,184,166,.2) }
-
-.send{ height:44px; padding:0 16px; border:none; border-radius:12px; cursor:pointer; background:var(--accent); color:white; font-weight:600; box-shadow:0 8px 16px rgba(20,184,166,.35); }
+.actions{ display:flex; gap:10px; }
+.send{
+  height:44px; padding:0 16px; border:none; border-radius:12px; cursor:pointer;
+  background:var(--accent); color:white; font-weight:600; box-shadow:0 8px 16px rgba(20,184,166,.35);
+}
 .send.alt{ background: var(--ok); }
 .send:disabled{ opacity:.6; cursor:not-allowed; box-shadow:none }
 
-.footbar{ display:flex; justify-content:space-between; align-items:center; padding:0 12px 12px 12px; font-size:12px; color:var(--muted); }
+/* แถบข้อมูลด้านล่าง */
+.footbar{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:8px 16px; font-size:12px; color:var(--muted);
+  border-top:1px solid var(--border);
+  background:var(--panel);
+}
 .count{ color:var(--muted); }
 .count.warn{ color: var(--warn); }
 .meta{ color: var(--ok); }
 
-.typing{ font-size:12px; color:var(--muted); padding:0 16px 12px }
-.toast{ position:fixed; inset:auto 16px 16px auto; background:var(--warn); color:white; padding:10px 12px; border-radius:12px; box-shadow:0 10px 24px rgba(0,0,0,.18); display:none; }
+/* สถานะกำลังพิมพ์ */
+.typing{ font-size:12px; color:var(--muted); padding:0 16px 8px }
 
+/* Toast */
+.toast{
+  position:fixed; inset:auto 16px calc(16px + env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) auto;
+  background:var(--warn); color:white; padding:10px 12px; border-radius:12px; box-shadow:0 10px 24px rgba(0,0,0,.18); display:none;
+}
+
+/* มือถือ */
 @media (max-width: 560px){
-  .bubble{ max-width:88% }
+  .bubble{ max-width: 94vw }
   .title{ font-size:16px }
   .sel{ min-width: 130px; }
 }
