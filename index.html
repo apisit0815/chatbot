@@ -1,17 +1,59 @@
-<!DOCTYPE html>
-<html lang="th">
+<!doctype html>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>แชทบอทครูแมน สำหรับนักเรียน</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <title>My Chatbot</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+    .chat { border: 1px solid #ccc; padding: 10px; min-height: 200px; }
+    .msg { margin: 5px 0; }
+    .user { font-weight: bold; }
+    .assistant { white-space: pre-wrap; }
+  </style>
 </head>
 <body>
-    <div id="chat-container">
-        <div id="chat-box"></div>
-        <input type="text" id="user-input" placeholder="พิมพ์คำถามของคุณที่นี่...">
-        <button id="send-btn">ส่ง</button>
-    </div>
-    <script src="script.js"></script>
+  <h1>My Chatbot</h1>
+  <div id="chat" class="chat"></div>
+  <form id="f">
+    <input id="q" placeholder="พิมพ์คำถาม..." style="width:80%;">
+    <button>ส่ง</button>
+  </form>
+
+  <script>
+    const URL = "https://script.google.com/macros/s/AKfycbwiV7d3fOVz21AWVutptBMprQoq1hvsem7wITfGYne-ad0bmdS6esmDjfKjDQxDHBRV/exec";
+    const chat = document.getElementById("chat");
+    const form = document.getElementById("f");
+    const q = document.getElementById("q");
+
+    function add(role, text) {
+      const div = document.createElement("div");
+      div.className = "msg";
+      div.innerHTML = role === "user" ? `<span class="user">คุณ:</span> ${text}` : `<span class="assistant">🤖 ${text}</span>`;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    form.addEventListener("submit", async e => {
+      e.preventDefault();
+      const text = q.value.trim();
+      if (!text) return;
+      add("user", text);
+      q.value = "";
+      add("assistant", "กำลังคิด...");
+
+      try {
+        const res = await fetch(URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain" },
+          body: JSON.stringify({ message: text })
+        });
+        const raw = await res.text();
+        const data = JSON.parse(raw);
+        chat.lastChild.innerHTML = "🤖 " + (data.reply || "(ไม่มีคำตอบ)");
+      } catch (err) {
+        chat.lastChild.innerHTML = "⚠️ Error: " + err;
+      }
+    });
+  </script>
 </body>
 </html>
