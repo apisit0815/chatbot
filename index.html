@@ -9,7 +9,147 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="./styles.css" />
+  <style>
+    /* —— ธีมสีห้องเรียน STEM (ฟ้า-เขียว) —— */
+    :root{
+      --bg:#f0f9ff; --panel:#ffffff; --text:#0f172a; --muted:#64748b;
+      --accent:#14b8a6; --accent-weak:#ccfbf1; --border:#bae6fd; --bubble:#ecfeff;
+      --ok:#0d9488; --warn:#ef4444;
+    }
+    .dark{
+      --bg:#0f172a; --panel:#1e293b; --text:#e2e8f0; --muted:#94a3b8;
+      --accent:#2dd4bf; --accent-weak:#0d9488; --border:#334155; --bubble:#164e63;
+      --ok:#5eead4; --warn:#f87171;
+    }
+
+    /* —— รีเซ็ตพื้นฐาน ให้วัดความสูงได้จริง —— */
+    *{ box-sizing:border-box }
+    html, body{ height:100%; width:100%; margin:0; }
+    body{
+      font-family:"Noto Sans Thai", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background:var(--bg); color:var(--text);
+      padding: max(0px, env(safe-area-inset-top)) max(0px, env(safe-area-inset-right))
+               max(0px, env(safe-area-inset-bottom)) max(0px, env(safe-area-inset-left));
+    }
+
+    /* —— แอปเต็มหน้าจอจริง —— */
+    .app{
+      width:100vw;
+      height:100dvh;         /* dvh = viewport สูงจริง */
+      display:flex;
+      flex-direction:column;
+    }
+    @supports (-webkit-touch-callout: none) {
+      .app{ height:-webkit-fill-available; } /* fallback iOS เก่า */
+    }
+
+    /* การ์ดเต็มจอ */
+    .card{
+      flex:1; display:flex; flex-direction:column;
+      background:var(--panel); border:none; border-radius:0;
+    }
+
+    /* ส่วนหัว (ติดบน) */
+    .header{
+      display:flex; flex-wrap:wrap; gap:12px;
+      align-items:center; justify-content:space-between;
+      padding:14px 16px; border-bottom:1px solid var(--border);
+      background:var(--panel);
+      position:sticky; top:0; z-index:10;
+    }
+    .brand{ display:flex; align-items:center; gap:10px; }
+    .logo{
+      width:36px; height:36px; border-radius:10px; display:grid; place-items:center;
+      background:linear-gradient(135deg, var(--accent), #22d3ee); color:white; font-weight:700;
+    }
+    .title{ font-weight:700; letter-spacing:.2px }
+    .subtitle{ font-size:12px; color:var(--muted); }
+
+    .controls{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .sel, .sliderWrap, .toggle{
+      border:1px solid var(--border); background:transparent; color:var(--text);
+      padding:8px 10px; border-radius:10px;
+    }
+    .sel{ min-width: 160px; }
+    .sliderWrap{ display:flex; align-items:center; gap:8px; }
+    .sliderWrap input{ accent-color: var(--accent); }
+    .toggle{ cursor:pointer; }
+
+    /* พื้นที่แชท (ยืดสุด) */
+    .chat{
+      flex:1; min-height:0; overflow:auto;
+      padding:18px; background:linear-gradient(180deg, transparent, rgba(0,0,0,.02));
+      scroll-behavior:smooth;
+    }
+    .empty{ color:var(--muted); text-align:center; margin-top:18px; font-size:14px; }
+
+    /* แชทบับเบิล */
+    .row{ display:flex; gap:10px; margin:10px 0; }
+    .row.user{ justify-content:flex-end; }
+    .avatar{
+      width:32px; height:32px; border-radius:10px; display:grid; place-items:center; font-size:14px;
+      background:var(--bubble); color:var(--muted); flex:0 0 auto;
+    }
+    .bubble{
+      max-width: min(1200px, 96vw);
+      padding:10px 12px; border-radius:14px; line-height:1.45; word-wrap:break-word;
+      border:1px solid var(--border); background:var(--panel);
+    }
+    .user .bubble{ background:var(--accent-weak); border-color:transparent; }
+    .assistant .bubble{ background:var(--panel); }
+
+    /* ส่วนป้อนข้อความ (ติดล่าง) */
+    .composer{
+      display:flex; gap:10px; align-items:center;
+      padding: 12px env(safe-area-inset-right) calc(12px + env(safe-area-inset-bottom)) env(safe-area-inset-left);
+      border-top:1px solid var(--border); background:var(--panel);
+      position:sticky; bottom:0; z-index:10;
+    }
+    textarea{
+      flex:1; resize:none; min-height:44px; max-height:40dvh;
+      padding:12px; border-radius:12px; border:1px solid var(--border);
+      background:var(--panel); color:var(--text); outline:none;
+    }
+    textarea:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(20,184,166,.2) }
+    .actions{ display:flex; gap:10px; }
+    .send{
+      height:44px; padding:0 16px; border:none; border-radius:12px; cursor:pointer;
+      background:var(--accent); color:white; font-weight:600; box-shadow:0 8px 16px rgba(20,184,166,.35);
+    }
+    .send.alt{ background: var(--ok); }
+    .send:disabled{ opacity:.6; cursor:not-allowed; box-shadow:none }
+
+    /* แถบข้อมูลด้านล่าง */
+    .footbar{
+      display:flex; justify-content:space-between; align-items:center;
+      padding:8px 16px; font-size:12px; color:var(--muted);
+      border-top:1px solid var(--border); background:var(--panel);
+    }
+    .count{ color:var(--muted); }
+    .count.warn{ color: var(--warn); }
+    .meta{ color: var(--ok); }
+
+    /* สถานะกำลังพิมพ์ */
+    .typing{ font-size:12px; color:var(--muted); padding:0 16px 8px }
+
+    /* Toast */
+    .toast{
+      position:fixed; inset:auto 16px calc(16px + env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) auto;
+      background:var(--warn); color:white; padding:10px 12px; border-radius:12px; box-shadow:0 10px 24px rgba(0,0,0,.18); display:none;
+    }
+
+    /* มือถือ */
+    @media (max-width: 560px){
+      .bubble{ max-width: 96vw }
+      .title{ font-size:16px }
+      .sel{ min-width: 130px; }
+    }
+
+    /* เคอร์เซอร์สำหรับเอฟเฟกต์พิมพ์สด */
+    .cursor { display:inline-block; width:8px; height:1em; vertical-align:bottom;
+      background: currentColor; margin-left:2px; animation: blink 1s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+  </style>
 </head>
 <body>
   <div class="app">
@@ -69,6 +209,199 @@
 
   <div class="toast" id="toast">เชื่อมต่อไม่สำเร็จ โปรดลองใหม่</div>
 
-  <script src="./app.js"></script>
+  <script>
+    // ======= แก้ค่านี้ให้เป็น URL ของ Apps Script Web App ของคุณ =======
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycbzd5R6d7i1v8Rm827CaP1KB9AcKWb9F_SXuZ2-jtBltfpolkhWN-3E5cJKvPQaiEuCF/exec"; // เช่น https://script.google.com/macros/s/AKfycb.../exec
+
+    // ======= DOM =======
+    const chat = document.getElementById("chat");
+    const q = document.getElementById("q");
+    const sendBtn = document.getElementById("sendBtn");
+    const skipBtn = document.getElementById("skipBtn");
+    const typing = document.getElementById("typing");
+    const toast = document.getElementById("toast");
+    const modeBtn = document.getElementById("modeBtn");
+    const tempSlider = document.getElementById("temp");
+    const tempVal = document.getElementById("tempVal");
+    const tokCount = document.getElementById("tokCount");
+    const metaBar = document.getElementById("metaBar");
+    const modeSel = document.getElementById("mode");
+    const gradeSel = document.getElementById("grade");
+
+    // ======= ธีม มืด/สว่าง =======
+    const applyTheme = () => {
+      const m = localStorage.getItem("theme") || "light";
+      document.documentElement.classList.toggle("dark", m === "dark");
+      modeBtn.textContent = m === "dark" ? "☀️" : "🌙";
+    };
+    modeBtn.onclick = () => {
+      const next = (localStorage.getItem("theme") || "light") === "light" ? "dark" : "light";
+      localStorage.setItem("theme", next); applyTheme();
+    };
+    applyTheme();
+
+    // แสดงค่า temp สด ๆ
+    tempSlider.addEventListener("input", ()=> tempVal.textContent = tempSlider.value);
+    tempVal.textContent = tempSlider.value;
+
+    // ======= ประมาณโทเคน (สอดคล้องฝั่งเซิร์ฟเวอร์) =======
+    function estimateTokensClient(s){
+      if(!s) return 0;
+      const ascii = (s.match(/[\x00-\x7F]/g) || []).length;
+      const nonAscii = s.length - ascii;
+      return Math.ceil(ascii/4) + Math.ceil(nonAscii/2);
+    }
+    function updateCounter(){
+      const t = estimateTokensClient(q.value);
+      tokCount.textContent = `ประมาณ ${t} / 500 โทเคน`;
+      tokCount.className = "count" + (t>500 ? " warn" : "");
+    }
+    q.addEventListener("input", updateCounter); updateCounter();
+
+    // ======= สถานะบทสนทนา =======
+    let history = [];
+    let typingController = { skipping:false };
+
+    // ======= ตัวช่วย UI =======
+    function addMessage(role, text){
+      const row = document.createElement("div");
+      row.className = `row ${role}`;
+      const avatar = document.createElement("div");
+      avatar.className = "avatar";
+      avatar.textContent = role === "user" ? "คุณ" : "Dr.";
+      const bubble = document.createElement("div");
+      bubble.className = `bubble ${role}`;
+      bubble.textContent = text;
+      const wrap = document.createElement("div"); wrap.appendChild(bubble);
+      if(role === "user"){ row.appendChild(wrap); row.appendChild(avatar); }
+      else{ row.appendChild(avatar); row.appendChild(wrap); }
+      chat.appendChild(row);
+      chat.querySelector(".empty")?.remove();
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function addAssistantBubble() {
+      const row = document.createElement("div");
+      row.className = "row assistant";
+      const avatar = document.createElement("div");
+      avatar.className = "avatar";
+      avatar.textContent = "Dr.";
+      const bubble = document.createElement("div");
+      bubble.className = "bubble assistant";
+      const wrap = document.createElement("div"); wrap.appendChild(bubble);
+      row.appendChild(avatar); row.appendChild(wrap);
+      chat.appendChild(row);
+      chat.querySelector(".empty")?.remove();
+      chat.scrollTop = chat.scrollHeight;
+      return bubble;
+    }
+
+    function setTyping(v){ typing.style.display = v ? "block" : "none"; }
+    function setSending(v){ sendBtn.disabled = v; skipBtn.disabled = v; }
+    function showToast(msg){
+      toast.textContent = msg; toast.style.display = "block";
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(()=> toast.style.display = "none", 2400);
+    }
+
+    // ======= เอฟเฟกต์พิมพ์สด =======
+    async function typeOutToBubble(text, bubbleEl, opts = {}) {
+      const speed = opts.speed ?? 10;  // ตัวอักษรต่อชุด
+      const delay = opts.delay ?? 18;  // หน่วงต่อชุด (มิลลิวินาที)
+      const cursor = document.createElement("span");
+      cursor.className = "cursor";
+      bubbleEl.textContent = "";
+      bubbleEl.appendChild(cursor);
+
+      const chars = text.split("");
+      let buffer = "";
+
+      function flushBuffer() {
+        if (!buffer) return;
+        const safeSpan = document.createElement("span");
+        safeSpan.textContent = buffer;
+        bubbleEl.insertBefore(safeSpan, cursor);
+        buffer = "";
+      }
+
+      typingController.skipping = false;
+      for (let i = 0; i < chars.length; i++) {
+        if (typingController.skipping) {
+          flushBuffer();
+          const rest = document.createElement("span");
+          rest.textContent = chars.slice(i).join("");
+          bubbleEl.insertBefore(rest, cursor);
+          break;
+        }
+        const ch = chars[i];
+        if (ch === "\n") { flushBuffer(); bubbleEl.insertBefore(document.createElement("br"), cursor); }
+        else { buffer += ch; }
+        flushBuffer();
+        if (i % speed === 0) await new Promise(r => setTimeout(r, delay));
+      }
+      cursor.remove();
+    }
+    skipBtn.addEventListener("click", ()=> typingController.skipping = true);
+
+    // ======= ส่งข้อความ =======
+    async function sendMessage(){
+      const text = q.value.trim();
+      if(!text) return;
+
+      // กันส่งเกิน 500 โทเคน
+      const t = estimateTokensClient(text);
+      if (t > 500){
+        showToast("ข้อความยาวเกิน 500 โทเคน กรุณาย่อก่อนส่ง");
+        return;
+      }
+
+      addMessage("user", text);
+      history.push({ role: "user", content: text });
+      q.value = ""; updateCounter(); setTyping(true); setSending(true);
+      metaBar.textContent = "";
+
+      try{
+        const payload = {
+          messages: history,      // เซิร์ฟเวอร์จะประกอบ system prompt ให้ตาม mode/grade
+          mode: modeSel.value,    // coach | teacher | tutor
+          grade: gradeSel.value,  // primary | lowersec | uppersec
+          temperature: Number(tempSlider.value)
+        };
+
+        const res = await fetch(ENDPOINT, {
+          method:"POST",
+          headers:{ "Content-Type":"text/plain" }, // simple request ลด CORS preflight
+          body: JSON.stringify(payload)
+        });
+
+        const raw = await res.text();
+        let data;
+        try{ data = JSON.parse(raw); } catch{ data = { error: "รูปแบบผลลัพธ์ไม่ถูกต้อง" }; }
+
+        if (data.error){
+          addMessage("assistant", "⚠️ " + data.error);
+        } else {
+          const bubble = addAssistantBubble();
+          const replyText = data.reply || "(ไม่มีคำตอบ)";
+          await typeOutToBubble(replyText, bubble, { speed: 10, delay: 18 });
+
+          if (data.meta){
+            const { ms, grade, mode, temperature } = data.meta;
+            metaBar.textContent = `⏱ ${ms} ms • โหมด: ${mode} • ระดับ: ${grade} • temp: ${temperature}`;
+          }
+          history.push({ role:"assistant", content: replyText });
+        }
+
+      }catch(err){
+        showToast("เชื่อมต่อไม่ได้ โปรดลองใหม่");
+      }finally{
+        setTyping(false); setSending(false);
+      }
+    }
+
+    // คีย์ลัด: Enter = ส่ง, Shift+Enter = ขึ้นบรรทัดใหม่
+    q.addEventListener("keydown", (e)=>{ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); sendMessage(); } });
+    sendBtn.addEventListener("click", (e)=>{ e.preventDefault(); sendMessage(); });
+  </script>
 </body>
 </html>
