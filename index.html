@@ -1,59 +1,254 @@
 <!doctype html>
-<html>
+<html lang="th">
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>My Chatbot</title>
+
+  <!-- ฟอนต์ไทยอ่านง่าย -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600&display=swap" rel="stylesheet">
+
   <style>
-    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; }
-    .chat { border: 1px solid #ccc; padding: 10px; min-height: 200px; }
-    .msg { margin: 5px 0; }
-    .user { font-weight: bold; }
-    .assistant { white-space: pre-wrap; }
+    :root{
+      --bg:#f7fafc; --panel:#ffffff; --text:#1a202c; --muted:#6b7280;
+      --accent:#2563eb; --accent-weak:#eef2ff; --border:#e5e7eb; --bubble:#f1f5f9;
+    }
+    .dark{
+      --bg:#0b1220; --panel:#0f172a; --text:#e5e7eb; --muted:#94a3b8;
+      --accent:#60a5fa; --accent-weak:#0b2942; --border:#1f2937; --bubble:#111827;
+    }
+
+    *{ box-sizing:border-box }
+    html,body{ height:100% }
+    body{
+      margin:0; font-family:"Noto Sans Thai", system-ui, sans-serif;
+      background:var(--bg); color:var(--text);
+      display:flex; justify-content:center; padding:16px;
+    }
+
+    .app{
+      width:100%; max-width:840px; display:flex; flex-direction:column;
+      gap:12px;
+    }
+
+    .card{
+      background:var(--panel); border:1px solid var(--border);
+      border-radius:16px; box-shadow:0 10px 24px rgba(0,0,0,.06);
+      overflow:hidden;
+    }
+
+    .header{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 16px; border-bottom:1px solid var(--border);
+    }
+    .brand{ display:flex; align-items:center; gap:10px; }
+    .logo{
+      width:36px; height:36px; border-radius:10px; display:grid; place-items:center;
+      background:linear-gradient(135deg, var(--accent), #22d3ee); color:white; font-weight:700;
+      box-shadow:0 6px 16px rgba(37,99,235,.25);
+    }
+    .title{ font-weight:700; letter-spacing:.2px }
+
+    .toggle{
+      border:1px solid var(--border); background:transparent; color:var(--text);
+      padding:8px 10px; border-radius:10px; cursor:pointer;
+    }
+
+    .chat{
+      height:min(62vh, 560px); overflow:auto; padding:18px; background:linear-gradient(180deg, transparent, rgba(0,0,0,.02));
+      scroll-behavior:smooth;
+    }
+    .empty{
+      color:var(--muted); text-align:center; margin-top:18px; font-size:14px;
+    }
+
+    .row{ display:flex; gap:10px; margin:10px 0; }
+    .row.user{ justify-content:flex-end; }
+    .avatar{
+      width:32px; height:32px; border-radius:10px; display:grid; place-items:center; font-size:14px;
+      background:var(--bubble); color:var(--muted); flex:0 0 auto;
+    }
+
+    .bubble{
+      max-width:78%; padding:10px 12px; border-radius:14px; line-height:1.45; word-wrap:break-word;
+      border:1px solid var(--border); background:var(--panel);
+    }
+    .user .bubble{
+      background:var(--accent-weak); border-color:transparent;
+    }
+    .assistant .bubble{
+      background:var(--panel);
+    }
+    .meta{ display:block; font-size:11px; color:var(--muted); margin-top:4px }
+
+    .composer{
+      display:flex; gap:10px; padding:12px; border-top:1px solid var(--border);
+      backdrop-filter: blur(4px);
+    }
+    textarea{
+      flex:1; resize:none; min-height:44px; max-height:140px;
+      padding:12px 12px; border-radius:12px; border:1px solid var(--border);
+      background:var(--panel); color:var(--text); outline:none;
+    }
+    textarea:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(37,99,235,.15) }
+    .send{
+      height:44px; padding:0 16px; border:none; border-radius:12px; cursor:pointer;
+      background:var(--accent); color:white; font-weight:600;
+      box-shadow:0 8px 16px rgba(37,99,235,.35);
+    }
+    .send:disabled{ opacity:.6; cursor:not-allowed; box-shadow:none }
+
+    .typing{ font-size:12px; color:var(--muted); padding:0 16px 12px }
+    .toast{
+      position:fixed; inset:auto 16px 16px auto; background:#ef4444; color:white;
+      padding:10px 12px; border-radius:12px; box-shadow:0 10px 24px rgba(0,0,0,.18);
+      display:none;
+    }
+
+    @media (max-width: 520px){
+      .bubble{ max-width:88% }
+      .title{ font-size:16px }
+    }
   </style>
 </head>
 <body>
-  <h1>My Chatbot</h1>
-  <div id="chat" class="chat"></div>
-  <form id="f">
-    <input id="q" placeholder="พิมพ์คำถาม..." style="width:80%;">
-    <button>ส่ง</button>
-  </form>
+  <div class="app">
+    <div class="card">
+      <div class="header">
+        <div class="brand">
+          <div class="logo">AI</div>
+          <div>
+            <div class="title">Classroom Chatbot</div>
+            <div style="font-size:12px;color:var(--muted)">ช่วยตอบคำถามและอธิบายแบบเข้าใจง่าย</div>
+          </div>
+        </div>
+        <button class="toggle" id="modeBtn" title="สลับโหมดแสง/มืด">🌙</button>
+      </div>
+
+      <div id="chat" class="chat">
+        <div class="empty">เริ่มแชทได้เลยด้านล่าง ⤵︎</div>
+      </div>
+
+      <div class="typing" id="typing" style="display:none">🤖 กำลังพิมพ์…</div>
+
+      <div class="composer">
+        <textarea id="q" placeholder="พิมพ์คำถาม (Enter = ส่ง, Shift+Enter = ขึ้นบรรทัดใหม่)"></textarea>
+        <button class="send" id="sendBtn">ส่ง</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">เกิดข้อผิดพลาดในการเชื่อมต่อ</div>
 
   <script>
-    const URL = "https://script.google.com/macros/s/AKfycbwiV7d3fOVz21AWVutptBMprQoq1hvsem7wITfGYne-ad0bmdS6esmDjfKjDQxDHBRV/exec";
+    // 1) ตั้งค่า URL ของ Apps Script
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycbwiV7d3fOVz21AWVutptBMprQoq1hvsem7wITfGYne-ad0bmdS6esmDjfKjDQxDHBRV/exec"; 
+    // 2) ตัวช่วย DOM
     const chat = document.getElementById("chat");
-    const form = document.getElementById("f");
     const q = document.getElementById("q");
+    const sendBtn = document.getElementById("sendBtn");
+    const typing = document.getElementById("typing");
+    const toast = document.getElementById("toast");
+    const modeBtn = document.getElementById("modeBtn");
 
-    function add(role, text) {
-      const div = document.createElement("div");
-      div.className = "msg";
-      div.innerHTML = role === "user" ? `<span class="user">คุณ:</span> ${text}` : `<span class="assistant">🤖 ${text}</span>`;
-      chat.appendChild(div);
+    // โหมดมืด-สว่าง (จำค่าไว้ใน localStorage)
+    const applyTheme = () => {
+      const m = localStorage.getItem("theme") || "light";
+      document.documentElement.classList.toggle("dark", m === "dark");
+      modeBtn.textContent = m === "dark" ? "☀️" : "🌙";
+    };
+    modeBtn.onclick = () => {
+      const next = (localStorage.getItem("theme") || "light") === "light" ? "dark" : "light";
+      localStorage.setItem("theme", next); applyTheme();
+    };
+    applyTheme();
+
+    // 3) ฟังก์ชันแสดงข้อความแบบ “บับเบิล”
+    function addMessage(role, text){
+      // ปลอดภัย: ใช้ textContent แทน innerHTML
+      const row = document.createElement("div");
+      row.className = `row ${role}`;
+      const avatar = document.createElement("div");
+      avatar.className = "avatar";
+      avatar.textContent = role === "user" ? "คุณ" : "AI";
+
+      const bubble = document.createElement("div");
+      bubble.className = `bubble ${role}`;
+      bubble.textContent = text;
+
+      const wrap = document.createElement("div");
+      wrap.appendChild(bubble);
+
+      if(role === "user"){
+        row.appendChild(wrap); row.appendChild(avatar);
+      }else{
+        row.appendChild(avatar); row.appendChild(wrap);
+      }
+
+      chat.appendChild(row);
+      chat.querySelector(".empty")?.remove();
       chat.scrollTop = chat.scrollHeight;
     }
 
-    form.addEventListener("submit", async e => {
-      e.preventDefault();
+    // 4) ส่งข้อความ
+    async function sendMessage(){
       const text = q.value.trim();
-      if (!text) return;
-      add("user", text);
-      q.value = "";
-      add("assistant", "กำลังคิด...");
+      if(!text) return;
 
-      try {
-        const res = await fetch(URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain" },
+      addMessage("user", text);
+      q.value = "";
+      autoGrow(q);
+      setTyping(true);
+      setSending(true);
+
+      try{
+        const res = await fetch(ENDPOINT, {
+          method:"POST",
+          headers:{ "Content-Type":"text/plain" },   // simple request, เลี่ยง CORS preflight
           body: JSON.stringify({ message: text })
         });
+
         const raw = await res.text();
         const data = JSON.parse(raw);
-        chat.lastChild.innerHTML = "🤖 " + (data.reply || "(ไม่มีคำตอบ)");
-      } catch (err) {
-        chat.lastChild.innerHTML = "⚠️ Error: " + err;
+        const reply = data?.reply || "(ไม่มีคำตอบ)";
+        addMessage("assistant", reply);
+      }catch(err){
+        showToast("เชื่อมต่อไม่ได้ ลองใหม่อีกครั้ง");
+      }finally{
+        setTyping(false);
+        setSending(false);
+      }
+    }
+
+    function setTyping(v){ typing.style.display = v ? "block" : "none"; }
+    function setSending(v){ sendBtn.disabled = v; }
+
+    // 5) คีย์บอร์ดลัด: Enter = ส่ง, Shift+Enter = ขึ้นบรรทัดใหม่
+    q.addEventListener("keydown", (e)=>{
+      if(e.key === "Enter" && !e.shiftKey){
+        e.preventDefault();
+        sendMessage();
       }
     });
+    // ปุ่มส่ง
+    sendBtn.addEventListener("click", (e)=>{ e.preventDefault(); sendMessage(); });
+
+    // 6) กล่องข้อความขยายอัตโนมัติ
+    function autoGrow(el){
+      el.style.height = "auto";
+      el.style.height = Math.min(el.scrollHeight, 140) + "px";
+    }
+    q.addEventListener("input", ()=>autoGrow(q));
+    autoGrow(q);
+
+    // 7) ทูสต์แจ้งเตือนสั้น ๆ
+    let toastTimer;
+    function showToast(msg){
+      toast.textContent = msg; toast.style.display = "block";
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(()=> toast.style.display = "none", 2400);
+    }
   </script>
 </body>
 </html>
