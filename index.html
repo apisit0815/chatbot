@@ -26,7 +26,6 @@
       --shadow:0 12px 28px rgba(0,0,0,.32);
     }
 
-    /* ===== RESET / FULL-HEIGHT ===== */
     *{ box-sizing:border-box }
     html, body{ height:100%; width:100%; margin:0 }
     body{
@@ -40,10 +39,9 @@
                max(0px, env(safe-area-inset-bottom)) max(0px, env(safe-area-inset-left));
     }
 
-    /* ===== APP LAYOUT: 100% viewport height ===== */
     .app{
       width:100vw;
-      height:100dvh;          /* viewport สูงจริง (แก้ปัญหาแถบนำทางมือถือ) */
+      height:100dvh;
       display:flex;
       align-items:stretch;
       justify-content:center;
@@ -51,7 +49,6 @@
     }
     @supports (-webkit-touch-callout: none) { .app{ height:-webkit-fill-available; } }
 
-    /* ===== CARD ===== */
     .card{
       flex:1;
       display:flex; flex-direction:column;
@@ -63,7 +60,6 @@
       overflow:hidden;
     }
 
-    /* ===== HEADER ===== */
     .header{
       display:flex; flex-wrap:wrap; gap:12px;
       align-items:center; justify-content:space-between;
@@ -91,7 +87,6 @@
     .sliderWrap input{ accent-color: var(--accent) }
     .toggle{ cursor:pointer }
 
-    /* ===== CHAT AREA ===== */
     .chat{
       flex:1; min-height:0; overflow:auto;
       padding:22px clamp(12px, 2vw, 26px);
@@ -111,11 +106,11 @@
       padding:12px 14px; border-radius:16px; line-height:1.55; word-wrap:break-word;
       border:1px solid var(--border); background:var(--panel);
       box-shadow: 0 2px 8px rgba(0,0,0,.04);
+      white-space:pre-wrap;
     }
     .user .bubble{ background:var(--accent-weak); border-color: transparent }
     .assistant .bubble{ background:var(--panel) }
 
-    /* ===== COMPOSER ===== */
     .composer{
       display:flex; gap:10px; align-items:center;
       padding: 12px clamp(12px, 2vw, 18px);
@@ -138,7 +133,6 @@
     }
     .send:disabled{ opacity:.6; cursor:not-allowed; box-shadow:none }
 
-    /* ===== FOOT ===== */
     .footbar{
       display:flex; justify-content:space-between; align-items:center;
       padding:8px clamp(12px, 2vw, 18px); font-size:12px; color:var(--muted);
@@ -162,7 +156,6 @@
       .title{ font-size:16px }
     }
 
-    /* cursor for typewriter effect */
     .cursor{ display:inline-block; width:8px; height:1em; vertical-align:bottom;
       background:currentColor; margin-left:2px; animation:blink 1s steps(1) infinite }
     @keyframes blink { 50%{ opacity:0 } }
@@ -174,7 +167,7 @@
       <!-- Header -->
       <div class="header">
         <div class="brand">
-          <div class="logo">AI</div>
+          <div class="logo" aria-hidden="true">AI</div>
           <div>
             <div class="title">Dr.Apisit’s STEM classroom chatbot</div>
             <div class="subtitle">โค้ช/ฟาซิลิเทเตอร์ สำหรับนักเรียน ประถม–มัธยม (จำกัด 500 โทเคน เข้า/ออก)</div>
@@ -182,13 +175,13 @@
         </div>
 
         <div class="controls">
-          <select id="mode" class="sel" title="บทบาทการตอบ">
+          <select id="mode" class="sel" title="บทบาทการตอบ" aria-label="เลือกโหมดการตอบ">
             <option value="coach">โหมด Coach (ถามนำ ชวนคิด)</option>
             <option value="teacher">โหมด Teacher (อธิบายเป็นขั้น)</option>
             <option value="tutor">โหมด Tutor (กระชับ ตรงประเด็น)</option>
           </select>
 
-          <select id="grade" class="sel" title="ระดับชั้น">
+          <select id="grade" class="sel" title="ระดับชั้น" aria-label="เลือกระดับชั้น">
             <option value="primary">ประถมศึกษา</option>
             <option value="lowersec" selected>มัธยมต้น</option>
             <option value="uppersec">มัธยมปลาย</option>
@@ -196,24 +189,24 @@
 
           <div class="sliderWrap" title="ความสร้างสรรค์: ต่ำ=ตอบตรง สูง=สร้างสรรค์">
             <label for="temp">Temperature</label>
-            <input id="temp" type="range" min="0" max="1" step="0.1" value="0.5">
+            <input id="temp" type="range" min="0" max="1" step="0.1" value="0.5" aria-label="ตั้งค่าอุณหภูมิ">
             <span id="tempVal">0.5</span>
           </div>
 
-          <button class="toggle" id="modeBtn" title="สลับโหมดแสง/มืด">🌙</button>
+          <button class="toggle" id="modeBtn" title="สลับโหมดแสง/มืด" aria-label="สลับโหมดแสง/มืด">🌙</button>
         </div>
       </div>
 
       <!-- Chat area -->
-      <div id="chat" class="chat">
+      <div id="chat" class="chat" aria-live="polite">
         <div class="empty">เริ่มแชทได้เลยด้านล่าง ⤵︎</div>
       </div>
 
-      <div class="typing" id="typing" style="display:none">🤖 กำลังพิมพ์…</div>
+      <div class="typing" id="typing" style="display:none">กำลังพิมพ์…</div>
 
       <!-- Composer -->
       <div class="composer">
-        <textarea id="q" placeholder="พิมพ์คำถาม (Enter = ส่ง, Shift+Enter = ขึ้นบรรทัดใหม่)"></textarea>
+        <textarea id="q" placeholder="พิมพ์คำถาม (Enter = ส่ง, Shift+Enter = ขึ้นบรรทัดใหม่)" autocomplete="off" spellcheck="true" autofocus aria-label="ช่องพิมพ์คำถาม"></textarea>
         <div class="actions">
           <button class="send" id="sendBtn">ส่ง</button>
         </div>
@@ -231,7 +224,7 @@
 
   <script>
     /* ===== CONFIG: ใส่ URL ของ Apps Script Web App ===== */
-    const ENDPOINT = "https://script.google.com/macros/s/AKfycbxlXBDZtd5rTRJzsYQ-Ce-ET7H3Xs2xxUNq_1OOsNnNDPYaC7hwIk1-VwX1PimLzAh6/exec"; // เช่น https://script.google.com/macros/s/AKfycb.../exec
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycbxvbaB830XWB6Y6bH7MGNmqUXK81FNRZ3hByWRtit7wX8wPo_qLcjmKum8pRjtfWRWK/exec";
 
     /* ===== DOM ===== */
     const chat = document.getElementById("chat");
@@ -247,7 +240,7 @@
     const modeSel = document.getElementById("mode");
     const gradeSel = document.getElementById("grade");
 
-    /* ให้ textarea ว่างเสมอเมื่อโหลดหน้า + อัปเดตตัวนับ */
+    /* ===== Init ===== */
     window.addEventListener("DOMContentLoaded", () => { q.value = ""; updateCounter(); });
 
     /* ===== Theme toggle ===== */
@@ -277,11 +270,19 @@
       const t = estimateTokensClient(q.value);
       tokCount.textContent = `ประมาณ ${t} / 500 โทเคน`;
       tokCount.className = "count" + (t>500 ? " warn" : "");
+      sendBtn.disabled = !q.value.trim() || t>500 || sending;
     }
     q.addEventListener("input", updateCounter); updateCounter();
 
     /* ===== Chat state ===== */
     let history = [];
+    const MAX_TURNS = 12; // เก็บล่าสุด (user+assistant) รวม 12 ข้อความ
+    function pushHistory(msg){
+      history.push(msg);
+      if (history.length > MAX_TURNS) {
+        history = [{...history[0]}, ...history.slice(-(MAX_TURNS-1))];
+      }
+    }
 
     /* ===== UI helpers ===== */
     function addMessage(role, text){
@@ -318,14 +319,15 @@
     }
 
     function setTyping(v){ typing.style.display = v ? "block" : "none"; }
-    function setSending(v){ sendBtn.disabled = v; }
+    function setSending(v){ sendBtn.disabled = v || !q.value.trim(); sending = v; }
+
     function showToast(msg){
       toast.textContent = msg; toast.style.display = "block";
       clearTimeout(showToast._t);
-      showToast._t = setTimeout(()=> toast.style.display = "none", 2400);
+      showToast._t = setTimeout(()=> toast.style.display = "none", 2600);
     }
 
-    /* ===== Typewriter effect (ตัดฟังก์ชัน "ข้ามการพิมพ์" ออก) ===== */
+    /* ===== Typewriter effect ===== */
     async function typeOutToBubble(text, bubbleEl, opts = {}) {
       const speed = opts.speed ?? 10;   // characters per batch
       const delay = opts.delay ?? 18;   // ms per batch
@@ -356,8 +358,12 @@
       cursor.remove();
     }
 
-    /* ===== Send flow ===== */
+    /* ===== Send flow (กันกดซ้ำเร็ว ๆ) ===== */
+    let sending = false;
+
     async function sendMessage(){
+      if (sending) return;
+
       const text = q.value.trim();
       if(!text) return;
 
@@ -368,7 +374,7 @@
       }
 
       addMessage("user", text);
-      history.push({ role: "user", content: text });
+      pushHistory({ role: "user", content: text });
       q.value = ""; updateCounter(); setTyping(true); setSending(true);
       metaBar.textContent = "";
 
@@ -388,10 +394,11 @@
 
         const raw = await res.text();
         let data;
-        try{ data = JSON.parse(raw); } catch{ data = { error: "รูปแบบผลลัพธ์ไม่ถูกต้อง" }; }
+        try{ data = JSON.parse(raw); } catch{ data = { error: "รูปแบบผลลัพธ์ไม่ถูกต้อง", details: raw } }
 
         if (data.error){
-          addMessage("assistant", "⚠️ " + data.error);
+          const detail = data.status ? ` (status ${data.status})` : "";
+          addMessage("assistant", "⚠️ " + data.error + detail);
         } else {
           const bubble = addAssistantBubble();
           const replyText = data.reply || "(ไม่มีคำตอบ)";
@@ -399,22 +406,29 @@
 
           if (data.meta){
             const { ms, grade, mode, temperature } = data.meta;
-            metaBar.textContent = `⏱ ${ms} ms • โหมด: ${mode} • ระดับ: ${grade} • temp: ${temperature}`;
+            const rawTemp = Number(tempSlider.value);
+            const note = (typeof temperature === "number" && rawTemp !== temperature) ? ` (clamped to ${temperature})` : "";
+            metaBar.textContent = `⏱ ${ms} ms • โหมด: ${mode} • ระดับ: ${grade} • temp: ${rawTemp}${note}`;
           }
-          history.push({ role:"assistant", content: replyText });
+          pushHistory({ role:"assistant", content: replyText });
         }
 
       }catch(err){
-        showToast("เชื่อมต่อไม่ได้ โปรดลองใหม่");
+        addMessage("assistant", "⚠️ เชื่อมต่อไม่ได้ โปรดลองใหม่");
+        console.error(err);
       }finally{
-        setTyping(false); setSending(false);
+        setTyping(false); setSending(false); updateCounter();
       }
     }
 
     // Enter = ส่ง, Shift+Enter = ขึ้นบรรทัดใหม่
-    q.addEventListener("keydown", (e)=>{ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); sendMessage(); } });
+    q.addEventListener("keydown", (e)=>{
+      if(e.key==="Enter" && !e.shiftKey){
+        e.preventDefault();
+        sendMessage();
+      }
+    });
     sendBtn.addEventListener("click", (e)=>{ e.preventDefault(); sendMessage(); });
   </script>
 </body>
 </html>
-
