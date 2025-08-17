@@ -136,7 +136,6 @@
       height:44px; padding:0 16px; border:none; border-radius:12px; cursor:pointer;
       background:var(--accent); color:white; font-weight:600; box-shadow:0 8px 16px rgba(20,184,166,.35);
     }
-    .send.alt{ background: var(--ok) }
     .send:disabled{ opacity:.6; cursor:not-allowed; box-shadow:none }
 
     /* ===== FOOT ===== */
@@ -238,7 +237,6 @@
     const chat = document.getElementById("chat");
     const q = document.getElementById("q");
     const sendBtn = document.getElementById("sendBtn");
-    const skipBtn = document.getElementById("skipBtn");
     const typing = document.getElementById("typing");
     const toast = document.getElementById("toast");
     const modeBtn = document.getElementById("modeBtn");
@@ -248,6 +246,9 @@
     const metaBar = document.getElementById("metaBar");
     const modeSel = document.getElementById("mode");
     const gradeSel = document.getElementById("grade");
+
+    /* ให้ textarea ว่างเสมอเมื่อโหลดหน้า + อัปเดตตัวนับ */
+    window.addEventListener("DOMContentLoaded", () => { q.value = ""; updateCounter(); });
 
     /* ===== Theme toggle ===== */
     const applyTheme = () => {
@@ -281,7 +282,6 @@
 
     /* ===== Chat state ===== */
     let history = [];
-    let typingController = { skipping:false };
 
     /* ===== UI helpers ===== */
     function addMessage(role, text){
@@ -318,14 +318,14 @@
     }
 
     function setTyping(v){ typing.style.display = v ? "block" : "none"; }
-    function setSending(v){ sendBtn.disabled = v; skipBtn.disabled = v; }
+    function setSending(v){ sendBtn.disabled = v; }
     function showToast(msg){
       toast.textContent = msg; toast.style.display = "block";
       clearTimeout(showToast._t);
       showToast._t = setTimeout(()=> toast.style.display = "none", 2400);
     }
 
-    /* ===== Typewriter effect ===== */
+    /* ===== Typewriter effect (ตัดฟังก์ชัน "ข้ามการพิมพ์" ออก) ===== */
     async function typeOutToBubble(text, bubbleEl, opts = {}) {
       const speed = opts.speed ?? 10;   // characters per batch
       const delay = opts.delay ?? 18;   // ms per batch
@@ -345,15 +345,7 @@
         buffer = "";
       }
 
-      typingController.skipping = false;
       for (let i = 0; i < chars.length; i++) {
-        if (typingController.skipping) {
-          flushBuffer();
-          const rest = document.createElement("span");
-          rest.textContent = chars.slice(i).join("");
-          bubbleEl.insertBefore(rest, cursor);
-          break;
-        }
         const ch = chars[i];
         if (ch === "\n") { flushBuffer(); bubbleEl.insertBefore(document.createElement("br"), cursor); }
         else { buffer += ch; }
@@ -363,7 +355,6 @@
       }
       cursor.remove();
     }
-    skipBtn.addEventListener("click", ()=> typingController.skipping = true);
 
     /* ===== Send flow ===== */
     async function sendMessage(){
@@ -426,4 +417,3 @@
   </script>
 </body>
 </html>
-
