@@ -10,7 +10,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
-    /* ===== THEME: STEM Aqua-Teal ===== */
     :root{
       --bg:#eef6ff; --bg2:#e7fbff;
       --panel:#ffffff; --text:#0f172a; --muted:#64748b;
@@ -224,7 +223,13 @@
 
   <script>
     /* ===== CONFIG: ใส่ URL ของ Apps Script Web App ===== */
-    const ENDPOINT = "https://script.google.com/macros/s/AKfycbxvbaB830XWB6Y6bH7MGNmqUXK81FNRZ3hByWRtit7wX8wPo_qLcjmKum8pRjtfWRWK/exec";
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycbxlXBDZtd5rTRJzsYQ-Ce-ET7H3Xs2xxUNq_1OOsNnNDPYaC7hwIk1-VwX1PimLzAh6/exec";
+
+    /* ===== GREETING (แสดงครั้งแรก ไม่ส่งเข้าประวัติ/ไม่เรียก API) ===== */
+    const GREETING =
+"สวัสดีครับ ยินดีต้อนรับสู่แชตบอทผู้ช่วยครูแมน\n" +
+"อยากรู้อะไรหรือมีข้อสงสัยด้านสะเต็ม ถามได้ตลอดนะครับ ยินดีให้ความช่วยเหลือ\n" +
+"ลองพิมพ์หัวข้อที่สนใจ เช่น พลังงานแสงอาทิตย์, แรงและการเคลื่อนที่, หรือการออกแบบชิ้นงาน 3D";
 
     /* ===== DOM ===== */
     const chat = document.getElementById("chat");
@@ -241,7 +246,11 @@
     const gradeSel = document.getElementById("grade");
 
     /* ===== Init ===== */
-    window.addEventListener("DOMContentLoaded", () => { q.value = ""; updateCounter(); });
+    window.addEventListener("DOMContentLoaded", () => {
+      q.value = "";
+      updateCounter();
+      showGreetingOnce(); // ทักทายครั้งแรก
+    });
 
     /* ===== Theme toggle ===== */
     const applyTheme = () => {
@@ -318,6 +327,14 @@
       return bubble;
     }
 
+    function showGreetingOnce(){
+      if (sessionStorage.getItem("greeted") === "1") return;
+      const bubble = addAssistantBubble();
+      // ใช้ typewriter ให้สวยงาม
+      typeOutToBubble(GREETING, bubble, { speed: 12, delay: 16 });
+      sessionStorage.setItem("greeted", "1");
+    }
+
     function setTyping(v){ typing.style.display = v ? "block" : "none"; }
     function setSending(v){ sendBtn.disabled = v || !q.value.trim(); sending = v; }
 
@@ -329,8 +346,8 @@
 
     /* ===== Typewriter effect ===== */
     async function typeOutToBubble(text, bubbleEl, opts = {}) {
-      const speed = opts.speed ?? 10;   // characters per batch
-      const delay = opts.delay ?? 18;   // ms per batch
+      const speed = opts.speed ?? 10;
+      const delay = opts.delay ?? 18;
       const cursor = document.createElement("span");
       cursor.className = "cursor";
       bubbleEl.textContent = "";
@@ -388,7 +405,7 @@
 
         const res = await fetch(ENDPOINT, {
           method:"POST",
-          headers:{ "Content-Type":"text/plain" }, // simple request ลด preflight
+          headers:{ "Content-Type":"text/plain" },
           body: JSON.stringify(payload)
         });
 
